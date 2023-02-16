@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation 'org.slf4j:slf4j-simple:2.0.6'
     implementation 'org.hibernate:hibernate-core:6.1.7.Final'
     runtimeOnly 'org.postgresql:postgresql:42.5.3'
     compileOnly 'org.projectlombok:lombok:1.18.26'
