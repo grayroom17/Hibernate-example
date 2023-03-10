@@ -1,15 +1,24 @@
-package com.example;
-
 import com.example.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 
 @Slf4j
-public class Runner {
-    public static void main(String[] args) {
+@Testcontainers
+class CheckIfPersistOfTestUserSuccessfulIT {
+
+    @Container
+    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+
+    @Test
+    void checkIfPersistOfTestUserSuccessful() {
         Configuration configuration = new Configuration();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.configure();
@@ -25,6 +34,9 @@ public class Runner {
                     .build();
             session.persist(user);
             transaction.commit();
+
+            var foundedEntity = session.find(User.class, user.getUsername());
+            Assertions.assertEquals(user, foundedEntity);
         }
     }
 }
