@@ -17,8 +17,8 @@ class CheckReflectionApiTest {
         var expectedSql = """
                           insert
                           into users
-                          (username, firstname, lastname, birth_date, age)
-                          values (?, ?, ?, ?, ?)
+                          (username, firstname, lastname, birth_date, role, info)
+                          values (?, ?, ?, ?, ?, ?)
                           """;
 
         var sql = """

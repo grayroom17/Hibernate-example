@@ -20,7 +20,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.8.1'
-
+    implementation group: 'com.vladmihalcea', name: 'hibernate-types-60', version: '2.21.1'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
