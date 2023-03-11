@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,9 +16,9 @@ public class User {
     String username;
     String firstname;
     String lastname;
+    @SuppressWarnings("JpaAttributeTypeInspection")
     @Column(name = "birth_date")
-    LocalDate birthDate;
-    Integer age;
+    Birthday birthdate;
     @Enumerated(EnumType.STRING)
     Role role;
 }

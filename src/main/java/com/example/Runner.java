@@ -1,5 +1,7 @@
 package com.example;
 
+import com.example.converter.BirthdayConverter;
+import com.example.entity.Birthday;
 import com.example.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
@@ -12,6 +14,7 @@ public class Runner {
     public static void main(String[] args) {
         Configuration configuration = new Configuration();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
+        configuration.addAttributeConverter(BirthdayConverter.class, true);
         configuration.configure();
         try (var sessionFactory = configuration.buildSessionFactory();
              var session = sessionFactory.openSession()) {
@@ -20,8 +23,7 @@ public class Runner {
                     .username("grayroom")
                     .firstname("Сергей")
                     .lastname("Деев")
-                    .birthDate(LocalDate.of(1991, 2, 17))
-                    .age(32)
+                    .birthdate(new Birthday(LocalDate.of(1991, 2, 17)))
                     .build();
             session.persist(user);
             transaction.commit();
