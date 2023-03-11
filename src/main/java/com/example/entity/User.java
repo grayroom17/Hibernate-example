@@ -21,4 +21,6 @@ public class User {
     @Column(name = "birth_date")
     LocalDate birthDate;
     Integer age;
+    @Enumerated(EnumType.STRING)
+    Role role;
 }

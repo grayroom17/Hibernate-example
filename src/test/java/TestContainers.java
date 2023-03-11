@@ -1,7 +1,6 @@
 import com.github.dockerjava.api.model.PortBinding;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.MountableFile;
 
 import java.time.Duration;
 
@@ -26,10 +25,11 @@ public class TestContainers {
                                     requireNonNull(cmd.getExposedPorts())[0]));
                     cmd.withName("postgres_it");
                 })
-                .withCopyFileToContainer(
+                /*.withCopyFileToContainer(
                         MountableFile.forClasspathResource("db-init-script.sql"),
                         "/docker-entrypoint-initdb.d/db-init-script.sql"
-                )
+                )*/
+               /* .withInitScript("db-init-script.sql")*/
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofMinutes(2)));
     }
 }

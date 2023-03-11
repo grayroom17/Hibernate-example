@@ -1,5 +1,8 @@
+import org.flywaydb.gradle.task.FlywayMigrateTask
+
 plugins {
     id 'java'
+    id "org.flywaydb.flyway" version "9.8.1"
 }
 
 group 'org.example'
@@ -16,6 +19,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql:42.5.3'
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.8.1'
+
 
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
@@ -35,3 +40,21 @@ java{
 test {
     useJUnitPlatform()
 }
+
+flyway {
+    user = 'postgres'
+    password = 'postgres'
+    schemas = ['public']
+    url = 'jdbc:postgresql://localhost:5433/postgres'
+    locations = ['filesystem:src/main/resources/db/migration']
+//    placeholders = [
+//            'keyABC': 'valueXYZ',
+//            'otherplaceholder': 'value123'
+//    ]
+}
+
+//task itMigrate(type: FlywayMigrateTask) {
+//    url = 'jdbc:postgresql://localhost:5434/postgres'
+//}
+
+defaultTasks 'flywayMigrate'
