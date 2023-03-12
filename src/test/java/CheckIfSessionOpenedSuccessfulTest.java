@@ -1,6 +1,5 @@
 import com.example.converter.BirthdayConverter;
 import com.example.helpers.MigrationHelper;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +25,6 @@ class CheckIfSessionOpenedSuccessfulIT {
     void checkIfSessionOpenedSuccessful() {
         Configuration configuration = new Configuration();
         configuration.addAttributeConverter(BirthdayConverter.class,true);
-//        configuration.registerTypeOverride(JsonBinaryType.class, new String[]{JsonBinaryType.INSTANCE.getName()});
         configuration.configure();
         try (var sessionFactory = configuration.buildSessionFactory();
              var session = sessionFactory.openSession()) {
