@@ -1,7 +1,6 @@
-import com.example.converter.BirthdayConverter;
+import com.example.config.SessionFactoryConfiguration;
 import com.example.helpers.MigrationHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,10 +22,7 @@ class CheckIfSessionOpenedSuccessfulIT {
 
     @Test
     void checkIfSessionOpenedSuccessful() {
-        Configuration configuration = new Configuration();
-        configuration.addAttributeConverter(BirthdayConverter.class,true);
-        configuration.configure();
-        try (var sessionFactory = configuration.buildSessionFactory();
+        try (var sessionFactory = SessionFactoryConfiguration.buildSessionFactory();
              var session = sessionFactory.openSession()) {
             Assertions.assertNotNull(session);
         }

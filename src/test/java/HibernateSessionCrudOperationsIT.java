@@ -1,14 +1,11 @@
-import com.example.converter.BirthdayConverter;
+import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
 import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -35,12 +32,7 @@ class HibernateSessionCrudOperationsIT {
     public static void initDbAndSessionFactory() {
         MigrationHelper.populateDb(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
 
-        Configuration configuration = new Configuration();
-        configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-        configuration.addAttributeConverter(BirthdayConverter.class, true);
-        configuration.registerTypeOverride(new JsonBinaryType(), new String[]{JsonBinaryType.INSTANCE.getName()});
-        configuration.configure();
-        sessionFactory = configuration.buildSessionFactory();
+        sessionFactory = SessionFactoryConfiguration.buildSessionFactory();
     }
 
     @AfterAll
@@ -219,7 +211,7 @@ class HibernateSessionCrudOperationsIT {
             var persistedUser = session.find(User.class, username);
             Assertions.assertNotNull(persistedUser);
             Assertions.assertNotEquals(user, persistedUser);
-            session.detach(persistedUser);
+            session.evict(persistedUser);
 
             var transaction = session.beginTransaction();
             session.remove(user);
