@@ -1,5 +1,6 @@
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
+import com.example.entity.PersonalInfo;
 import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
 import jakarta.persistence.EntityExistsException;
@@ -45,9 +46,11 @@ class HibernateSessionCrudOperationsIT {
         try (var session = sessionFactory.openSession()) {
             var user = User.builder()
                     .username("defaultUser")
-                    .firstname("Ivan")
-                    .lastname("Ivanov")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Ivan")
+                            .lastname("Ivanov")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {"age": 33, "name": "Ivan"}""")
@@ -65,9 +68,11 @@ class HibernateSessionCrudOperationsIT {
             var transaction = session.beginTransaction();
             var user = User.builder()
                     .username("newUser")
-                    .firstname("Иван")
-                    .lastname("Иванов")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Иван")
+                            .lastname("Иванов")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {
@@ -132,9 +137,11 @@ class HibernateSessionCrudOperationsIT {
             var transaction = session.beginTransaction();
             var user = User.builder()
                     .username(username)
-                    .firstname("Иван")
-                    .lastname("Иванов")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Иван")
+                            .lastname("Иванов")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {
@@ -157,9 +164,11 @@ class HibernateSessionCrudOperationsIT {
             var username = "userMustBeUpdated";
             var user = User.builder()
                     .username(username)
-                    .firstname("Петр")
-                    .lastname("Петров")
-                    .birthdate(new Birthday(LocalDate.of(1991, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Петр")
+                            .lastname("Петров")
+                            .birthdate(new Birthday(LocalDate.of(1991, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {

@@ -16,11 +16,8 @@ import org.hibernate.annotations.Type;
 public class User {
     @Id
     String username;
-    String firstname;
-    String lastname;
-    @SuppressWarnings("JpaAttributeTypeInspection")
-    @Column(name = "birth_date")
-    Birthday birthdate;
+    @Embedded
+    PersonalInfo personalInfo;
     @Enumerated(EnumType.STRING)
     Role role;
     @Type(JsonBinaryType.class)

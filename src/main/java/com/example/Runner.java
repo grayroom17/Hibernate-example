@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
+import com.example.entity.PersonalInfo;
 import com.example.entity.User;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,9 +16,11 @@ public class Runner {
             var transaction = session.beginTransaction();
             var user = User.builder()
                     .username("grayroom")
-                    .firstname("Сергей")
-                    .lastname("Деев")
-                    .birthdate(new Birthday(LocalDate.of(1991, 2, 17)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Сергей")
+                            .lastname("Деев")
+                            .birthdate(new Birthday(LocalDate.of(1991, 2, 17)))
+                            .build())
                     .info("""
                           {
                           "name": "Ivan",

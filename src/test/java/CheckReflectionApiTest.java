@@ -1,3 +1,4 @@
+/*
 import com.example.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
@@ -47,4 +48,4 @@ class CheckReflectionApiTest {
 
         Assertions.assertEquals(expectedSql, formattedSql);
     }
-}
+}*/

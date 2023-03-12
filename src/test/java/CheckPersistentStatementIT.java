@@ -1,5 +1,6 @@
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
+import com.example.entity.PersonalInfo;
 import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
 import org.junit.jupiter.api.Assertions;
@@ -29,9 +30,11 @@ class CheckPersistentStatementIT {
         try (var sessionFactory = SessionFactoryConfiguration.buildSessionFactory()) {
             var user = User.builder()
                     .username("someUser1")
-                    .firstname("Иван")
-                    .lastname("Иванов")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Иван")
+                            .lastname("Иванов")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {
@@ -63,9 +66,11 @@ class CheckPersistentStatementIT {
         try (var sessionFactory = SessionFactoryConfiguration.buildSessionFactory()) {
             var user = User.builder()
                     .username("someUser2")
-                    .firstname("Иван")
-                    .lastname("Иванов")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Иван")
+                            .lastname("Иванов")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {
@@ -74,7 +79,7 @@ class CheckPersistentStatementIT {
                           }
                           """)
                     .build();
-            var oldName = user.getFirstname();
+            var oldName = user.getPersonalInfo().getFirstname();
 
 
             try (var session1 = sessionFactory.openSession()) {
@@ -87,12 +92,12 @@ class CheckPersistentStatementIT {
             try (var session2 = sessionFactory.openSession()) {
                 var transaction = session2.beginTransaction();
                 var newName = "Василий";
-                user.setFirstname(newName);
+                user.getPersonalInfo().setFirstname(newName);
 
                 Assertions.assertDoesNotThrow(() -> session2.refresh(user));
                 transaction.commit();
-                Assertions.assertNotEquals(newName, user.getFirstname());
-                Assertions.assertEquals(oldName, user.getFirstname());
+                Assertions.assertNotEquals(newName, user.getPersonalInfo().getFirstname());
+                Assertions.assertEquals(oldName, user.getPersonalInfo().getFirstname());
             }
         }
     }
@@ -102,9 +107,11 @@ class CheckPersistentStatementIT {
         try (var sessionFactory = SessionFactoryConfiguration.buildSessionFactory()) {
             var user = User.builder()
                     .username("someUser2")
-                    .firstname("Иван")
-                    .lastname("Иванов")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                    .personalInfo(PersonalInfo.builder()
+                            .firstname("Иван")
+                            .lastname("Иванов")
+                            .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
+                            .build())
                     .role(USER)
                     .info("""
                           {
@@ -113,7 +120,7 @@ class CheckPersistentStatementIT {
                           }
                           """)
                     .build();
-            var oldName = user.getFirstname();
+            var oldName = user.getPersonalInfo().getFirstname();
 
 
             try (var session1 = sessionFactory.openSession()) {
@@ -126,12 +133,12 @@ class CheckPersistentStatementIT {
             try (var session2 = sessionFactory.openSession()) {
                 var transaction = session2.beginTransaction();
                 var newName = "Василий";
-                user.setFirstname(newName);
+                user.getPersonalInfo().setFirstname(newName);
 
                 Assertions.assertDoesNotThrow(() -> session2.merge(user));
                 transaction.commit();
-                Assertions.assertNotEquals(oldName, user.getFirstname());
-                Assertions.assertEquals(newName, user.getFirstname());
+                Assertions.assertNotEquals(oldName, user.getPersonalInfo().getFirstname());
+                Assertions.assertEquals(newName, user.getPersonalInfo().getFirstname());
             }
         }
     }
