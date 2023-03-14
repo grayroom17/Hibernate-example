@@ -47,16 +47,17 @@ class CheckPersistentStatementIT {
 
             try (var session1 = sessionFactory.openSession()) {
                 var transaction = session1.beginTransaction();
-                session1.merge(user);
+                user = session1.merge(user);
                 transaction.commit();
             }
 
 
             try (var session2 = sessionFactory.openSession()) {
                 var transaction = session2.beginTransaction();
-                Assertions.assertDoesNotThrow(() -> session2.remove(user));
+                User finalUser = user;
+                Assertions.assertDoesNotThrow(() -> session2.remove(finalUser));
                 transaction.commit();
-                Assertions.assertNull(session2.find(User.class, user.getUsername()));
+                Assertions.assertNull(session2.find(User.class, user.getId()));
             }
         }
     }
@@ -84,7 +85,7 @@ class CheckPersistentStatementIT {
 
             try (var session1 = sessionFactory.openSession()) {
                 var transaction = session1.beginTransaction();
-                session1.merge(user);
+                user = session1.merge(user);
                 transaction.commit();
             }
 
@@ -94,7 +95,8 @@ class CheckPersistentStatementIT {
                 var newName = "Василий";
                 user.getPersonalInfo().setFirstname(newName);
 
-                Assertions.assertDoesNotThrow(() -> session2.refresh(user));
+                User finalUser = user;
+                Assertions.assertDoesNotThrow(() -> session2.refresh(finalUser));
                 transaction.commit();
                 Assertions.assertNotEquals(newName, user.getPersonalInfo().getFirstname());
                 Assertions.assertEquals(oldName, user.getPersonalInfo().getFirstname());
@@ -106,7 +108,7 @@ class CheckPersistentStatementIT {
     void merge_whenDataIsNotPersisted_thenDataWillNotBeUpdatedFromDb() {
         try (var sessionFactory = SessionFactoryConfiguration.buildSessionFactory()) {
             var user = User.builder()
-                    .username("someUser2")
+                    .username("someUser3")
                     .personalInfo(PersonalInfo.builder()
                             .firstname("Иван")
                             .lastname("Иванов")
@@ -125,7 +127,7 @@ class CheckPersistentStatementIT {
 
             try (var session1 = sessionFactory.openSession()) {
                 var transaction = session1.beginTransaction();
-                session1.merge(user);
+                user = session1.merge(user);
                 transaction.commit();
             }
 
@@ -135,7 +137,8 @@ class CheckPersistentStatementIT {
                 var newName = "Василий";
                 user.getPersonalInfo().setFirstname(newName);
 
-                Assertions.assertDoesNotThrow(() -> session2.merge(user));
+                User finalUser = user;
+                Assertions.assertDoesNotThrow(() -> session2.merge(finalUser));
                 transaction.commit();
                 Assertions.assertNotEquals(oldName, user.getPersonalInfo().getFirstname());
                 Assertions.assertEquals(newName, user.getPersonalInfo().getFirstname());

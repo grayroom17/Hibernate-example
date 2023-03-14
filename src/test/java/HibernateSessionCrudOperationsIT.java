@@ -4,10 +4,12 @@ import com.example.entity.PersonalInfo;
 import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.PersistentObjectException;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.StaleStateException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -44,7 +46,9 @@ class HibernateSessionCrudOperationsIT {
     @Test
     void find_whenDataIsSaved_thenReturnFoundedData() {
         try (var session = sessionFactory.openSession()) {
+            var userId = 1L;
             var user = User.builder()
+                    .id(userId)
                     .username("defaultUser")
                     .personalInfo(PersonalInfo.builder()
                             .firstname("Ivan")
@@ -56,7 +60,7 @@ class HibernateSessionCrudOperationsIT {
                           {"age": 33, "name": "Ivan"}""")
                     .build();
 
-            var foundedEntity = session.find(User.class, user.getUsername());
+            var foundedEntity = session.find(User.class, userId);
             Assertions.assertNotNull(foundedEntity);
             Assertions.assertEquals(user, foundedEntity);
         }
@@ -81,62 +85,59 @@ class HibernateSessionCrudOperationsIT {
                           }
                           """)
                     .build();
-            Assertions.assertNull(session.find(User.class, user.getUsername()));
 
             session.persist(user);
             transaction.commit();
 
-            var foundedEntity = session.find(User.class, user.getUsername());
+            var foundedEntity = session.find(User.class, user.getId());
             Assertions.assertEquals(user, foundedEntity);
         }
     }
 
     @Test
-    void persist_whenDataIsSaved_thenThrowConstraintViolationException() {
+    void persist_whenDataIsSavedButNotPersisted_thenThrowConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
-            var username = "defaultUser";
-
             var user = User.builder()
-                    .username(username)
+                    .id(1L)
+                    .username("defaultUser")
                     .build();
 
             var transaction = session.beginTransaction();
-            session.persist(user);
-            var message = "Converting `org.hibernate.exception.ConstraintViolationException` to JPA `PersistenceException` : could not execute statement";
-            var exception = Assertions.assertThrows(PersistenceException.class,
-                    transaction::commit,
-                    message);
-            Assertions.assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
+            var message = "Converting `org.hibernate.PersistentObjectException` to JPA `PersistenceException` : detached entity passed to persist: com.example.entity.User";
+            var exception = Assertions.assertThrows(PersistenceException.class, () -> session.persist(user), message);
+            Assertions.assertEquals(PersistentObjectException.class, exception.getCause().getClass());
+            var causeMessage = "detached entity passed to persist: com.example.entity.User";
+            Assertions.assertEquals(causeMessage, exception.getCause().getMessage());
+            transaction.rollback();
         }
     }
 
     @Test
     void persist_whenDataIsAlreadyPersisted_thenThrowEntityExistsException() {
         try (var session = sessionFactory.openSession()) {
-            var username = "defaultUser";
-            var persistedUser = session.find(User.class, username);
+            var userId = 1L;
+            var persistedUser = session.find(User.class, userId);
             Assertions.assertNotNull(persistedUser);
 
             var user = User.builder()
-                    .username(username)
+                    .id(userId)
+                    .username("defaultUser")
                     .build();
 
             var transaction = session.beginTransaction();
             var exceptionMessage = "A different object with the same identifier value was already associated with the session : [com.example.entity.User#defaultUser]";
-            Assertions.assertThrows(EntityExistsException.class, () -> session.persist(user), exceptionMessage);
+            var exception = Assertions.assertThrows(PersistenceException.class, () -> session.persist(user), exceptionMessage);
             transaction.commit();
+            Assertions.assertEquals(PersistentObjectException.class, exception.getCause().getClass());
         }
     }
 
     @Test
     void merge_whenDataIsNotSaved_thenSaveData() {
         try (var session = sessionFactory.openSession()) {
-            var username = "notSavedUser";
-            Assertions.assertNull(session.find(User.class, username));
-
             var transaction = session.beginTransaction();
             var user = User.builder()
-                    .username(username)
+                    .username("notSavedUser")
                     .personalInfo(PersonalInfo.builder()
                             .firstname("Иван")
                             .lastname("Иванов")
@@ -150,10 +151,10 @@ class HibernateSessionCrudOperationsIT {
                           }
                           """)
                     .build();
-            session.merge(user);
+            user = session.merge(user);
             transaction.commit();
 
-            var foundedEntity = session.find(User.class, username);
+            var foundedEntity = session.find(User.class, user.getId());
             Assertions.assertEquals(user, foundedEntity);
         }
     }
@@ -161,9 +162,10 @@ class HibernateSessionCrudOperationsIT {
     @Test
     void merge_whenDataIsSaved_thenUpdateData() {
         try (var session = sessionFactory.openSession()) {
-            var username = "userMustBeUpdated";
+            var userId = 3L;
             var user = User.builder()
-                    .username(username)
+                    .id(userId)
+                    .username("userMustBeUpdated")
                     .personalInfo(PersonalInfo.builder()
                             .firstname("Петр")
                             .lastname("Петров")
@@ -177,7 +179,7 @@ class HibernateSessionCrudOperationsIT {
                           }
                           """)
                     .build();
-            var savedUser = session.find(User.class, username);
+            var savedUser = session.find(User.class, userId);
             Assertions.assertNotNull(savedUser);
             Assertions.assertNotEquals(user, savedUser);
 
@@ -185,7 +187,7 @@ class HibernateSessionCrudOperationsIT {
             session.merge(user);
             transaction.commit();
 
-            var foundedEntity = session.find(User.class, username);
+            var foundedEntity = session.find(User.class, userId);
             Assertions.assertEquals(user, foundedEntity);
         }
     }
@@ -193,12 +195,13 @@ class HibernateSessionCrudOperationsIT {
     @Test
     void remove_whenDataIsAlreadyPersisted_thenThrowsEntityExistsException() {
         try (var session = sessionFactory.openSession()) {
-            var username = "userMustBeDeleted";
+            var userId = 2L;
             var user = User.builder()
-                    .username(username)
+                    .id(userId)
+                    .username("userMustBeDeleted")
                     .build();
 
-            var persistedUser = session.find(User.class, username);
+            var persistedUser = session.find(User.class, userId);
             Assertions.assertNotNull(persistedUser);
             Assertions.assertNotEquals(user, persistedUser);
 
@@ -212,12 +215,13 @@ class HibernateSessionCrudOperationsIT {
     @Test
     void remove_whenDataIsSaved_thenRemoveData() {
         try (var session = sessionFactory.openSession()) {
-            var username = "userMustBeDeleted";
+            var userId = 2L;
             var user = User.builder()
-                    .username(username)
+                    .id(userId)
+                    .username("userMustBeDeleted")
                     .build();
 
-            var persistedUser = session.find(User.class, username);
+            var persistedUser = session.find(User.class, userId);
             Assertions.assertNotNull(persistedUser);
             Assertions.assertNotEquals(user, persistedUser);
             session.evict(persistedUser);
@@ -226,23 +230,25 @@ class HibernateSessionCrudOperationsIT {
             session.remove(user);
             transaction.commit();
 
-            Assertions.assertNull(session.find(User.class, username));
+            Assertions.assertNull(session.find(User.class, userId));
         }
     }
 
     @Test
-    void remove_whenDataIsNotSaved_thenOk() {
+    void remove_whenDataIsNotSaved_thenThrowStaleStateException() {
         try (var session = sessionFactory.openSession()) {
-            var username = "notSavedUser";
+            var userId = 10_000_000L + (long) (Math.random() * (Long.MAX_VALUE - 10_000_000L));
             var user = User.builder()
-                    .username(username)
+                    .id(userId)
+                    .username("notSavedUser")
                     .build();
 
-            Assertions.assertNull(session.find(User.class, username));
+            Assertions.assertNull(session.find(User.class, userId));
 
             var transaction = session.beginTransaction();
             Assertions.assertDoesNotThrow(() -> session.remove(user));
-            Assertions.assertDoesNotThrow(transaction::commit);
+            var exception = Assertions.assertThrows(OptimisticLockException.class, transaction::commit);
+            Assertions.assertEquals(StaleStateException.class, exception.getCause().getClass());
         }
     }
 }

@@ -15,16 +15,16 @@ public class Runner {
              var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
             var user = User.builder()
-                    .username("grayroom")
+                    .username("fancyMonkey")
                     .personalInfo(PersonalInfo.builder()
-                            .firstname("Сергей")
-                            .lastname("Деев")
-                            .birthdate(new Birthday(LocalDate.of(1991, 2, 17)))
+                            .firstname("Иван")
+                            .lastname("Петрушкин")
+                            .birthdate(new Birthday(LocalDate.of(1995, 1, 1)))
                             .build())
                     .info("""
                           {
                           "name": "Ivan",
-                          "age": 25
+                          "age": 2
                           }
                           """)
                     .build();

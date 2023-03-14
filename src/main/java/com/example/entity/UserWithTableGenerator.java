@@ -12,10 +12,15 @@ import org.hibernate.annotations.Type;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "users_with_table_generator")
+public class UserWithTableGenerator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "table_generator")
+    @TableGenerator(name = "table_generator",
+            table = "sequences_table",
+            pkColumnName = "table_name",
+            valueColumnName = "pk_value",
+            allocationSize = 1)
     Long id;
     @Column(unique = true)
     String username;
