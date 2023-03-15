@@ -25,4 +25,7 @@ public class User {
     Role role;
     @Type(JsonBinaryType.class)
     String info;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    Company company;
 }

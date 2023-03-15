@@ -18,6 +18,8 @@
         <property name="hbm2ddl.auto">validate</property>
 
         <mapping class="com.example.entity.User"/>
+        <mapping class="com.example.entity.Company"/>
+
         <mapping class="com.example.entity.UserWithSequence"/>
         <mapping class="com.example.entity.UserWithTableGenerator"/>
         <mapping class="com.example.entity.UserWithCompositePrimaryKey"/>
