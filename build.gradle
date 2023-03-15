@@ -1,5 +1,8 @@
+import org.flywaydb.gradle.task.FlywayMigrateTask
+
 plugins {
     id 'java'
+    id "org.flywaydb.flyway" version "9.8.1"
 }
 
 group 'org.example'
@@ -10,22 +13,58 @@ repositories {
 }
 
 dependencies {
+//    implementation 'org.slf4j:slf4j-api:2.0.6'
+//    implementation 'org.slf4j:slf4j-simple:2.0.6'
+    implementation 'org.slf4j:slf4j-log4j12:2.0.6'
+
     implementation 'org.hibernate:hibernate-core:6.1.7.Final'
     runtimeOnly 'org.postgresql:postgresql:42.5.3'
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.8.1'
+    implementation group: 'com.vladmihalcea', name: 'hibernate-types-60', version: '2.21.1'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.26'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testImplementation group: 'org.testcontainers', name: 'testcontainers', version: '1.17.6'
+    testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.17.6'
+    testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.17.6'
+
 }
 
-java{
+java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
 test {
     useJUnitPlatform()
+
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
 }
+
+flyway {
+    user = 'postgres'
+    password = 'postgres'
+    schemas = ['public']
+    url = 'jdbc:postgresql://localhost:5433/postgres'
+    locations = ['filesystem:src/main/resources/db/migration']
+//    placeholders = [
+//            'keyABC': 'valueXYZ',
+//            'otherplaceholder': 'value123'
+//    ]
+}
+
+//task itMigrate(type: FlywayMigrateTask) {
+//    url = 'jdbc:postgresql://localhost:5434/postgres'
+//}
+
+defaultTasks 'flywayMigrate'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
