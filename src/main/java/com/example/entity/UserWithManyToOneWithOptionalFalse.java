@@ -13,7 +13,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class User {
+public class UserWithManyToOneWithOptionalFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -25,7 +25,7 @@ public class User {
     Role role;
     @Type(JsonBinaryType.class)
     String info;
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "company_id")
     Company company;
 }

@@ -23,6 +23,8 @@
         <mapping class="com.example.entity.UserWithSequence"/>
         <mapping class="com.example.entity.UserWithTableGenerator"/>
         <mapping class="com.example.entity.UserWithCompositePrimaryKey"/>
+        <mapping class="com.example.entity.UserWithManyToOneWithOptionalFalse"/>
+        <mapping class="com.example.entity.UserWithManyToOneWithFetchLazy"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
