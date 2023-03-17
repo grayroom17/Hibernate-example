@@ -1,8 +1,11 @@
+package primarykeytypes;
+
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
 import com.example.entity.PersonalInfo;
-import com.example.entity.UserWithSequence;
+import com.example.entity.primarykeytypes.UserWithSequence;
 import com.example.helpers.MigrationHelper;
+import itcontainers.ItContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -21,7 +24,7 @@ import static com.example.entity.Role.USER;
 @Testcontainers
 class CheckUsersWithSequenceIT {
     @Container
-    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+    public static final PostgreSQLContainer<?> POSTGRES = ItContainers.postgres();
 
     private static SessionFactory sessionFactory;
 

@@ -1,6 +1,11 @@
+package manytoone;
+
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.*;
+import com.example.entity.manytoone.UserWithManyToOneWithFetchLazy;
+import com.example.entity.manytoone.UserWithManyToOneWithOptionalFalse;
 import com.example.helpers.MigrationHelper;
+import itcontainers.ItContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.TransientObjectException;
@@ -22,7 +27,7 @@ import static com.example.entity.Role.USER;
 @Testcontainers
 class ManyToOneIT {
     @Container
-    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+    public static final PostgreSQLContainer<?> POSTGRES = ItContainers.postgres();
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 

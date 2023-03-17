@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import itcontainers.ItContainers;
 
 import java.time.LocalDate;
 
@@ -26,7 +27,7 @@ import static com.example.entity.Role.USER;
 @Testcontainers
 class HibernateSessionCrudOperationsIT {
     @Container
-    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+    public static final PostgreSQLContainer<?> POSTGRES = ItContainers.postgres();
 
     private static SessionFactory sessionFactory;
 

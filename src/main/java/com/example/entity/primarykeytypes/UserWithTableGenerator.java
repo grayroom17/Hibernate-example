@@ -1,5 +1,7 @@
-package com.example.entity;
+package com.example.entity.primarykeytypes;
 
+import com.example.entity.PersonalInfo;
+import com.example.entity.Role;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,10 +14,15 @@ import org.hibernate.annotations.Type;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class UserWithManyToOneWithOptionalFalse {
+@Table(name = "users_with_table_generator")
+public class UserWithTableGenerator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "table_generator")
+    @TableGenerator(name = "table_generator",
+            table = "sequences_table",
+            pkColumnName = "table_name",
+            valueColumnName = "pk_value",
+            allocationSize = 1)
     Long id;
     @Column(unique = true)
     String username;
@@ -25,7 +32,4 @@ public class UserWithManyToOneWithOptionalFalse {
     Role role;
     @Type(JsonBinaryType.class)
     String info;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "company_id")
-    Company company;
 }

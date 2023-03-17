@@ -1,3 +1,5 @@
+package itcontainers;
+
 import com.github.dockerjava.api.model.PortBinding;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -7,7 +9,7 @@ import java.time.Duration;
 import static com.github.dockerjava.api.model.Ports.Binding.bindPort;
 import static java.util.Objects.requireNonNull;
 
-public class TestContainers {
+public class ItContainers {
     @SuppressWarnings("resource")
     public static PostgreSQLContainer<?> postgres() {
         var innerPort = 5432;

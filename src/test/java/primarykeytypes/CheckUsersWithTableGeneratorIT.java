@@ -1,7 +1,9 @@
+package primarykeytypes;
+
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
 import com.example.entity.PersonalInfo;
-import com.example.entity.UserWithCompositePrimaryKey;
+import com.example.entity.primarykeytypes.UserWithTableGenerator;
 import com.example.helpers.MigrationHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import itcontainers.ItContainers;
 
 import java.time.LocalDate;
 
@@ -19,9 +22,9 @@ import static com.example.entity.Role.USER;
 
 @Slf4j
 @Testcontainers
-class CheckUsersWithCompositePrimaryKeyIT {
+class CheckUsersWithTableGeneratorIT {
     @Container
-    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+    public static final PostgreSQLContainer<?> POSTGRES = ItContainers.postgres();
 
     private static SessionFactory sessionFactory;
 
@@ -42,13 +45,13 @@ class CheckUsersWithCompositePrimaryKeyIT {
     void merge() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var user = UserWithCompositePrimaryKey.builder()
+            var user = UserWithTableGenerator.builder()
+                    .username("notSavedUser")
                     .personalInfo(PersonalInfo.builder()
                             .firstname("Иван")
                             .lastname("Иванов")
                             .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
                             .build())
-                    .username("notSavedUser")
                     .role(USER)
                     .info("""
                           {
@@ -57,12 +60,12 @@ class CheckUsersWithCompositePrimaryKeyIT {
                           }
                           """)
                     .build();
-            session.merge(user);
+            user = session.merge(user);
             transaction.commit();
 
-            var foundedEntity = session.find(UserWithCompositePrimaryKey.class, user.getPersonalInfo());
+            var foundedEntity = session.find(UserWithTableGenerator.class, user.getId());
             Assertions.assertEquals(user, foundedEntity);
-            Assertions.assertNotNull(foundedEntity.getPersonalInfo());
+            Assertions.assertNotNull(foundedEntity.getId());
         }
     }
 }

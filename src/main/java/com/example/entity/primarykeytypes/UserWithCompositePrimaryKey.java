@@ -1,5 +1,7 @@
-package com.example.entity;
+package com.example.entity.primarykeytypes;
 
+import com.example.entity.PersonalInfo;
+import com.example.entity.Role;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.*;

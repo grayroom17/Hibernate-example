@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import itcontainers.ItContainers;
 
 @Slf4j
 @Testcontainers
 class CheckIfSessionOpenedSuccessfulIT {
 
     @Container
-    public static final PostgreSQLContainer<?> POSTGRES = TestContainers.postgres();
+    public static final PostgreSQLContainer<?> POSTGRES = ItContainers.postgres();
 
     @BeforeAll
     public static void populateDb() {

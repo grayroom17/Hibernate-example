@@ -20,11 +20,11 @@
         <mapping class="com.example.entity.User"/>
         <mapping class="com.example.entity.Company"/>
 
-        <mapping class="com.example.entity.UserWithSequence"/>
-        <mapping class="com.example.entity.UserWithTableGenerator"/>
-        <mapping class="com.example.entity.UserWithCompositePrimaryKey"/>
-        <mapping class="com.example.entity.UserWithManyToOneWithOptionalFalse"/>
-        <mapping class="com.example.entity.UserWithManyToOneWithFetchLazy"/>
+        <mapping class="com.example.entity.primarykeytypes.UserWithSequence"/>
+        <mapping class="com.example.entity.primarykeytypes.UserWithTableGenerator"/>
+        <mapping class="com.example.entity.primarykeytypes.UserWithCompositePrimaryKey"/>
+        <mapping class="com.example.entity.manytoone.UserWithManyToOneWithOptionalFalse"/>
+        <mapping class="com.example.entity.manytoone.UserWithManyToOneWithFetchLazy"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
