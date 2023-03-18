@@ -1,4 +1,4 @@
-package com.example.entity.manytoone;
+package com.example.entity.many.to.one;
 
 import com.example.entity.Company;
 import com.example.entity.PersonalInfo;
