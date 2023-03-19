@@ -1,4 +1,4 @@
-package com.example.entity.primarykeytypes;
+package com.example.primarykeytypes;
 
 import com.example.entity.PersonalInfo;
 import com.example.entity.Role;

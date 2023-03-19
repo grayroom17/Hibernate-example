@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.example.many.to.one;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Company {
+@Table(name = "company")
+public class CompanyManyToOne {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -23,5 +24,5 @@ public class Company {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "company")
-    List<User> users;
+    List<UserManyToOne> users;
 }

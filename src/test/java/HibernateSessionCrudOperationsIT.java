@@ -3,6 +3,7 @@ import com.example.entity.Birthday;
 import com.example.entity.PersonalInfo;
 import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
+import itcontainers.ItContainers;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceException;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import itcontainers.ItContainers;
 
 import java.time.LocalDate;
 
@@ -126,7 +126,7 @@ class HibernateSessionCrudOperationsIT {
                     .build();
 
             var transaction = session.beginTransaction();
-            var exceptionMessage = "A different object with the same identifier value was already associated with the session : [com.example.entity.User#defaultUser]";
+            var exceptionMessage = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserManyToOne#defaultUser]";
             var exception = Assertions.assertThrows(PersistenceException.class, () -> session.persist(user), exceptionMessage);
             transaction.commit();
             Assertions.assertEquals(PersistentObjectException.class, exception.getCause().getClass());
@@ -207,7 +207,7 @@ class HibernateSessionCrudOperationsIT {
             Assertions.assertNotEquals(user, persistedUser);
 
             var transaction = session.beginTransaction();
-            var message = "A different object with the same identifier value was already associated with the session : [com.example.entity.User#userMustBeDeleted]";
+            var message = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserManyToOne#userMustBeDeleted]";
             Assertions.assertThrows(EntityExistsException.class, () -> session.remove(user), message);
             transaction.commit();
         }

@@ -1,4 +1,4 @@
-package com.example.entity.primarykeytypes;
+package com.example.primarykeytypes;
 
 import com.example.entity.PersonalInfo;
 import com.example.entity.Role;
@@ -14,20 +14,12 @@ import org.hibernate.annotations.Type;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users_with_table_generator")
-public class UserWithTableGenerator {
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "table_generator")
-    @TableGenerator(name = "table_generator",
-            table = "sequences_table",
-            pkColumnName = "table_name",
-            valueColumnName = "pk_value",
-            allocationSize = 1)
-    Long id;
+@Table(name = "users_with_composite_primary_key")
+public class UserWithCompositePrimaryKey {
+    @EmbeddedId
+    PersonalInfo personalInfo;
     @Column(unique = true)
     String username;
-    @Embedded
-    PersonalInfo personalInfo;
     @Enumerated(EnumType.STRING)
     Role role;
     @Type(JsonBinaryType.class)

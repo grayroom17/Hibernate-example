@@ -1,4 +1,4 @@
-package com.example.entity;
+package com.example.one.to.many;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +12,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Company {
+@Table(name = "company")
+public class CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -20,8 +21,6 @@ public class Company {
     @Column(unique = true)
     String name;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "company")
-    List<User> users;
+    List<UserForStackOverFlowExceptionCheck> users;
 }

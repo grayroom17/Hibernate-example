@@ -3,7 +3,7 @@ package primarykeytypes;
 import com.example.config.SessionFactoryConfiguration;
 import com.example.entity.Birthday;
 import com.example.entity.PersonalInfo;
-import com.example.entity.primarykeytypes.UserWithTableGenerator;
+import com.example.primarykeytypes.UserWithTableGenerator;
 import com.example.helpers.MigrationHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;

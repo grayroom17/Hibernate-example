@@ -20,12 +20,16 @@
         <mapping class="com.example.entity.User"/>
         <mapping class="com.example.entity.Company"/>
 
-        <mapping class="com.example.entity.primarykeytypes.UserWithSequence"/>
-        <mapping class="com.example.entity.primarykeytypes.UserWithTableGenerator"/>
-        <mapping class="com.example.entity.primarykeytypes.UserWithCompositePrimaryKey"/>
-        <mapping class="com.example.entity.many.to.one.UserWithManyToOneWithOptionalFalse"/>
-        <mapping class="com.example.entity.many.to.one.UserWithManyToOneWithFetchLazy"/>
-        <mapping class="com.example.entity.many.to.one.UserWithCascadeTypeAll"/>
+        <mapping class="com.example.primarykeytypes.UserWithSequence"/>
+        <mapping class="com.example.primarykeytypes.UserWithTableGenerator"/>
+        <mapping class="com.example.primarykeytypes.UserWithCompositePrimaryKey"/>
+        <mapping class="com.example.many.to.one.CompanyManyToOne"/>
+        <mapping class="com.example.many.to.one.UserManyToOne"/>
+        <mapping class="com.example.many.to.one.UserWithManyToOneWithOptionalFalse"/>
+        <mapping class="com.example.many.to.one.UserWithManyToOneWithFetchLazy"/>
+        <mapping class="com.example.many.to.one.UserWithCascadeTypeAll"/>
+        <mapping class="com.example.one.to.many.CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.one.to.many.UserForStackOverFlowExceptionCheck"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

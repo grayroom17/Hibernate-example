@@ -1,6 +1,5 @@
-package com.example.entity.many.to.one;
+package com.example.one.to.many;
 
-import com.example.entity.Company;
 import com.example.entity.PersonalInfo;
 import com.example.entity.Role;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -16,21 +15,24 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserWithManyToOneWithFetchLazy {
+public class UserForStackOverFlowExceptionCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @Column(unique = true)
     String username;
+
     @Embedded
     PersonalInfo personalInfo;
+
     @Enumerated(EnumType.STRING)
     Role role;
+
     @Type(JsonBinaryType.class)
     String info;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "company_id")
-    Company company;
+    CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods company;
 }

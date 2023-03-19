@@ -1,5 +1,6 @@
-package com.example.entity;
+package com.example.one.to.many;
 
+import com.example.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Company {
+public class CompanyWithCascadeTypeAll {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

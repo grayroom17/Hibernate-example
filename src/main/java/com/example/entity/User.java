@@ -17,14 +17,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     @Column(unique = true)
     String username;
+
     @Embedded
     PersonalInfo personalInfo;
+
     @Enumerated(EnumType.STRING)
     Role role;
+
     @Type(JsonBinaryType.class)
     String info;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     Company company;

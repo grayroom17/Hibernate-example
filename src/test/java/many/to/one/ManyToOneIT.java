@@ -1,11 +1,8 @@
 package many.to.one;
 
 import com.example.config.SessionFactoryConfiguration;
-import com.example.entity.*;
-import com.example.entity.many.to.one.UserWithCascadeTypeAll;
-import com.example.entity.many.to.one.UserWithManyToOneWithFetchLazy;
-import com.example.entity.many.to.one.UserWithManyToOneWithOptionalFalse;
 import com.example.helpers.MigrationHelper;
+import com.example.many.to.one.*;
 import itcontainers.ItContainers;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
@@ -20,7 +17,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.LocalDate;
 
 @Slf4j
 @Testcontainers
@@ -49,10 +45,10 @@ class ManyToOneIT {
     void persist_whenRelatedDataNotPersisted_thenTransientObjectException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 1")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 1")
                     .build();
-            var user = User.builder()
+            var user = UserManyToOne.builder()
                     .username("newUser 1")
                     .company(company)
                     .build();
@@ -68,10 +64,10 @@ class ManyToOneIT {
     void persist_whenRelatedDataAlreadyPersisted_thenOk() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 2")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 2")
                     .build();
-            var user = User.builder()
+            var user = UserManyToOne.builder()
                     .username("newUser 2")
                     .company(company)
                     .build();
@@ -81,9 +77,9 @@ class ManyToOneIT {
             transaction.commit();
             session.clear();
 
-            var foundedEntity = session.find(User.class, user.getId());
+            var foundedEntity = session.find(UserManyToOne.class, user.getId());
             Assertions.assertEquals(user, foundedEntity);
-            var foundedCompany = session.find(Company.class, foundedEntity.getCompany().getId());
+            var foundedCompany = session.find(CompanyManyToOne.class, foundedEntity.getCompany().getId());
             Assertions.assertEquals(company, foundedCompany);
         }
     }
@@ -92,10 +88,10 @@ class ManyToOneIT {
     void whenManyToOneOptionalTrueFetchEager_thenHibernateDoOuterLeftJoinToRelatedTable() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 3")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 3")
                     .build();
-            var user = User.builder()
+            var user = UserManyToOne.builder()
                     .username("newUser 3")
                     .company(company)
                     .build();
@@ -108,7 +104,7 @@ class ManyToOneIT {
 
             System.setOut(new PrintStream(outContent));
             @SuppressWarnings("unused")
-            var foundedEntity = session.find(User.class, user.getId());
+            var foundedEntity = session.find(UserManyToOne.class, user.getId());
             log.warn(outContent.toString());
             Assertions.assertTrue(outContent.toString().contains("left join")
                                   || outContent.toString().contains("left outer join"));
@@ -120,8 +116,8 @@ class ManyToOneIT {
     void whenManyToOneOptionalFalseFetchEager_thenHibernateDoInnerJoinToRelatedTable() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 4")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 4")
                     .build();
             var user = UserWithManyToOneWithOptionalFalse.builder()
                     .username("newUser 4")
@@ -149,8 +145,8 @@ class ManyToOneIT {
     void whenManyToOneOptionalFalseFetchLazy_thenHibernateDoNotAnyJoinToRelatedTable() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 5")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 5")
                     .build();
             var user = UserWithManyToOneWithFetchLazy.builder()
                     .username("newUser 5")
@@ -176,8 +172,8 @@ class ManyToOneIT {
     void persistManyEntity_whenManyToOneCascadeTypePersis_thenHibernateSaveOneEntityBeforeMany() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 6")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 6")
                     .build();
             var user = UserWithCascadeTypeAll.builder()
                     .username("newUser 6")
@@ -198,8 +194,8 @@ class ManyToOneIT {
     void mergeManyEntity_whenManyToOneCascadeTypeMerge_thenHibernateSaveOrUpdateOneEntityBeforeMany() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 7")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 7")
                     .build();
             var defaultUserKey = 1L;
             var user = session.find(UserWithCascadeTypeAll.class, defaultUserKey);
@@ -221,8 +217,8 @@ class ManyToOneIT {
     void removeManyEntity_whenManyToOneCascadeTypeRemove_thenHibernateRemoveManyEntityBeforeOne() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
-                    .name("Default Company 8")
+            var company = CompanyManyToOne.builder()
+                    .name("Default CompanyManyToOne 8")
                     .build();
             var user = UserWithCascadeTypeAll.builder()
                     .username("newUser 8")
@@ -252,14 +248,10 @@ class ManyToOneIT {
             var userWithCompany = session.find(UserWithCascadeTypeAll.class, 4L);
             var company = userWithCompany.getCompany();
 
-            Assertions.assertNull(userWithCompany.getPersonalInfo());
-            Assertions.assertNull(userWithCompany.getRole());
-            userWithCompany.setPersonalInfo(PersonalInfo.builder()
-                    .firstname("Ivan")
-                    .lastname("Ivanov")
-                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
-                    .build());
-            userWithCompany.setRole(Role.ADMIN);
+            var newUsername = "new Username";
+            var oldUsername = userWithCompany.getUsername();
+            Assertions.assertNotEquals(newUsername, oldUsername);
+            userWithCompany.setUsername(newUsername);
 
             var companyName = company.getName();
             company.setName(companyName + "Changed");
@@ -269,9 +261,8 @@ class ManyToOneIT {
             transaction.commit();
             session.clear();
 
-            Assertions.assertNull(userWithCompany.getPersonalInfo());
-            Assertions.assertNull(userWithCompany.getRole());
-            Assertions.assertEquals(companyName,userWithCompany.getCompany().getName());
+            Assertions.assertEquals(oldUsername, userWithCompany.getUsername());
+            Assertions.assertEquals(companyName, userWithCompany.getCompany().getName());
         }
     }
 

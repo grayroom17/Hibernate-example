@@ -1,5 +1,5 @@
 /*
-import com.example.entity.User;
+import com.example.entity.UserManyToOne;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ class CheckReflectionApiTest {
                   values (%s)
                   """;
 
-        var userClass = User.class;
+        var userClass = UserManyToOne.class;
         var tableName = Optional.ofNullable(userClass.getAnnotation(Table.class))
                 .map(Table::name)
                 .orElse(userClass.getName());
