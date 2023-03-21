@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToManyWithoutCascadeTypes {
+public class UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -21,5 +21,5 @@ public class UserForOneToManyWithoutCascadeTypes {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    CompanyWithoutCascadeTypes company;
+    CompanyWithoutCascadeTypesAndOrphanRemovalFalse company;
 }

@@ -223,11 +223,11 @@ class OneToManyIT {
     void mergeOneEntity_whenOneToManyCascadeTypeMerge_thenHibernateThrowsTransientObjectException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = CompanyWithoutCascadeTypes.builder()
+            var company = CompanyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .name("Default Company 7")
                     .build();
             var defaultUserKey = 1L;
-            var user = session.find(UserForOneToManyWithoutCascadeTypes.class, defaultUserKey);
+            var user = session.find(UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse.class, defaultUserKey);
             company.addUser(user);
 
             session.merge(company);
@@ -270,10 +270,10 @@ class OneToManyIT {
     void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var company = CompanyWithoutCascadeTypes.builder()
+            var company = CompanyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .name("Default Company 9")
                     .build();
-            var user = UserForOneToManyWithoutCascadeTypes.builder()
+            var user = UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .username("newUser 9")
                     .build();
             company.addUser(user);
@@ -323,7 +323,7 @@ class OneToManyIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var company = session.find(CompanyWithoutCascadeTypes.class, 1L);
+            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
             var user = company.getUsers().stream().findFirst().orElseThrow();
 
             var newCompanyName = "new CompanyName";
@@ -369,7 +369,7 @@ class OneToManyIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var company = session.find(CompanyWithoutCascadeTypes.class, 1L);
+            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
             var user = company.getUsers().stream().findFirst().orElseThrow();
 
             Assertions.assertTrue(session.contains(company));
@@ -380,6 +380,60 @@ class OneToManyIT {
 
             Assertions.assertFalse(session.contains(company));
             Assertions.assertTrue(session.contains(user));
+        }
+    }
+
+    @Test
+    void whenOneToManyOrphanRemovalTrue_thenHibernateDeleteObjectRelatedToCollectionUnderMany() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var companyId = 1L;
+            var userId = 6L;
+
+            var company = session.find(CompanyForOneToManyTests.class, companyId);
+            var users = company.getUsers();
+            Assertions.assertNotNull(users.stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findAny().orElseThrow());
+
+            users.removeIf(user -> user.getId().equals(userId));
+
+            session.getTransaction().commit();
+            session.clear();
+
+            var companyAfterCommit = session.find(CompanyForOneToManyTests.class, companyId);
+            var usersAfterCommit = companyAfterCommit.getUsers();
+            Assertions.assertTrue(usersAfterCommit.stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findAny().isEmpty());
+        }
+    }
+
+    @Test
+    void whenOneToManyOrphanRemovalFalse_thenHibernateDoNotDeleteObjectRelatedToCollectionUnderMany() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var companyId = 1L;
+            var userId = 5L;
+
+            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
+            var users = company.getUsers();
+            Assertions.assertNotNull(users.stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findAny().orElseThrow());
+
+            users.removeIf(user -> user.getId().equals(userId));
+
+            session.getTransaction().commit();
+            session.clear();
+
+            var companyAfterCommit = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
+            var usersAfterCommit = companyAfterCommit.getUsers();
+            Assertions.assertNotNull(usersAfterCommit.stream()
+                    .filter(user -> user.getId().equals(userId))
+                    .findAny().orElseThrow());
         }
     }
 

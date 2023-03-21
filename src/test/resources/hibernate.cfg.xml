@@ -33,9 +33,9 @@
         <mapping class="com.example.one.to.many.CompanyForOneToManyTests"/>
         <mapping class="com.example.one.to.many.UserForOneToManyTests"/>
         <mapping class="com.example.one.to.many.CompanyWithOneToManyWithFetchEager"/>
-        <mapping class="com.example.one.to.many.CompanyWithoutCascadeTypes"/>
+        <mapping class="com.example.one.to.many.CompanyWithoutCascadeTypesAndOrphanRemovalFalse"/>
         <mapping class="com.example.one.to.many.UserForOneToManyFetchEagerTests"/>
-        <mapping class="com.example.one.to.many.UserForOneToManyWithoutCascadeTypes"/>
+        <mapping class="com.example.one.to.many.UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

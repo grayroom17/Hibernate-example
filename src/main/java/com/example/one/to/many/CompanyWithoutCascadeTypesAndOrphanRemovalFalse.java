@@ -14,7 +14,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "company")
-public class CompanyWithoutCascadeTypes {
+public class CompanyWithoutCascadeTypesAndOrphanRemovalFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -26,9 +26,9 @@ public class CompanyWithoutCascadeTypes {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "company")
-    Set<UserForOneToManyWithoutCascadeTypes> users = new HashSet<>();
+    Set<UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse> users = new HashSet<>();
 
-    public void addUser(UserForOneToManyWithoutCascadeTypes user) {
+    public void addUser(UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse user) {
         users.add(user);
         user.setCompany(this);
     }

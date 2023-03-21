@@ -25,7 +25,7 @@ public class CompanyForOneToManyTests {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<UserForOneToManyTests> users = new HashSet<>();
 
     public void addUser(UserForOneToManyTests user) {
