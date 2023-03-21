@@ -1,10 +1,10 @@
 package com.example.one.to.many;
 
-import com.example.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -13,7 +13,8 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class CompanyWithCascadeTypeAll {
+@Table(name = "company")
+public class CompanyWithoutCascadeTypes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -23,6 +24,12 @@ public class CompanyWithCascadeTypeAll {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     @OneToMany(mappedBy = "company")
-    Set<User> users;
+    Set<UserForOneToManyWithoutCascadeTypes> users = new HashSet<>();
+
+    public void addUser(UserForOneToManyWithoutCascadeTypes user) {
+        users.add(user);
+        user.setCompany(this);
+    }
 }

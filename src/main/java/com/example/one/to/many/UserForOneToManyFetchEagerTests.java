@@ -1,10 +1,8 @@
-package com.example.many.to.one;
+package com.example.one.to.many;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,17 +10,16 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "company")
-public class CompanyManyToOne {
+@Table(name = "users")
+public class UserForOneToManyFetchEagerTests {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(unique = true)
-    String name;
+    String username;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "company")
-    List<UserManyToOne> users;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    CompanyWithOneToManyWithFetchEager company;
 }

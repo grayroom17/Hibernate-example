@@ -126,7 +126,7 @@ class HibernateSessionCrudOperationsIT {
                     .build();
 
             var transaction = session.beginTransaction();
-            var exceptionMessage = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserManyToOne#defaultUser]";
+            var exceptionMessage = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserForOneToManyTests#defaultUser]";
             var exception = Assertions.assertThrows(PersistenceException.class, () -> session.persist(user), exceptionMessage);
             transaction.commit();
             Assertions.assertEquals(PersistentObjectException.class, exception.getCause().getClass());
@@ -207,7 +207,7 @@ class HibernateSessionCrudOperationsIT {
             Assertions.assertNotEquals(user, persistedUser);
 
             var transaction = session.beginTransaction();
-            var message = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserManyToOne#userMustBeDeleted]";
+            var message = "A different object with the same identifier value was already associated with the session : [com.example.entity.UserForOneToManyTests#userMustBeDeleted]";
             Assertions.assertThrows(EntityExistsException.class, () -> session.remove(user), message);
             transaction.commit();
         }
@@ -250,6 +250,7 @@ class HibernateSessionCrudOperationsIT {
             Assertions.assertDoesNotThrow(() -> session.remove(user));
             var exception = Assertions.assertThrows(OptimisticLockException.class, transaction::commit);
             Assertions.assertEquals(StaleStateException.class, exception.getCause().getClass());
+            transaction.rollback();
         }
     }
 }

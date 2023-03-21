@@ -23,5 +23,5 @@ public class UserWithManyToOneWithFetchLazy {
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
-    CompanyManyToOne company;
+    CompanyForManyToOneTests company;
 }

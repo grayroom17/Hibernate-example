@@ -4,23 +4,25 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class UserWithManyToOneWithOptionalFalse {
-
+@Table(name = "company")
+public class CompanyForManyToOneTests {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(unique = true)
-    String username;
+    String name;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "company_id")
-    CompanyForManyToOneTests company;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "company")
+    Set<UserForManyToOneTests> users;
 }

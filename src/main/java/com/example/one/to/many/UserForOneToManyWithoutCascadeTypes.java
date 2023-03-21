@@ -1,4 +1,4 @@
-package com.example.many.to.one;
+package com.example.one.to.many;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,8 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserWithManyToOneWithOptionalFalse {
-
+public class UserForOneToManyWithoutCascadeTypes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -20,7 +19,7 @@ public class UserWithManyToOneWithOptionalFalse {
     @Column(unique = true)
     String username;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "company_id")
-    CompanyForManyToOneTests company;
+    CompanyWithoutCascadeTypes company;
 }

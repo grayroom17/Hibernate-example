@@ -1,12 +1,17 @@
 package one.to.many;
 
 import com.example.config.SessionFactoryConfiguration;
-import com.example.one.to.many.CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods;
+import com.example.entity.Company;
+import com.example.entity.User;
 import com.example.helpers.MigrationHelper;
-import com.example.many.to.one.*;
+import com.example.many.to.one.UserWithManyToOneWithFetchLazy;
+import com.example.one.to.many.*;
 import itcontainers.ItContainers;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
+import org.hibernate.TransientObjectException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.time.LocalDate;
+import java.util.Set;
 
 @Slf4j
 @Testcontainers
@@ -53,234 +58,329 @@ class OneToManyIT {
         }
     }
 
-//    @Test
-//    void persist_whenRelatedDataAlreadyPersisted_thenOk() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 2")
-//                    .build();
-//            var user = UserManyToOne.builder()
-//                    .username("newUser 2")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(company);
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//            var foundedEntity = session.find(UserManyToOne.class, user.getId());
-//            Assertions.assertEquals(user, foundedEntity);
-//            var foundedCompany = session.find(CompanyManyToOne.class, foundedEntity.getCompany().getId());
-//            Assertions.assertEquals(company, foundedCompany);
-//        }
-//    }
-//
-//    @Test
-//    void whenManyToOneOptionalTrueFetchEager_thenHibernateDoOuterLeftJoinToRelatedTable() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 3")
-//                    .build();
-//            var user = UserManyToOne.builder()
-//                    .username("newUser 3")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(company);
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//
-//            System.setOut(new PrintStream(outContent));
-//            @SuppressWarnings("unused")
-//            var foundedEntity = session.find(UserManyToOne.class, user.getId());
-//            log.warn(outContent.toString());
-//            Assertions.assertTrue(outContent.toString().contains("left join")
-//                                  || outContent.toString().contains("left outer join"));
-//            System.setOut(originalOut);
-//        }
-//    }
-//
-//    @Test
-//    void whenManyToOneOptionalFalseFetchEager_thenHibernateDoInnerJoinToRelatedTable() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 4")
-//                    .build();
-//            var user = UserWithManyToOneWithOptionalFalse.builder()
-//                    .username("newUser 4")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(company);
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//
-//            System.setOut(new PrintStream(outContent));
-//            @SuppressWarnings("unused")
-//            var foundedEntity = session.find(UserWithManyToOneWithOptionalFalse.class, user.getId());
-//            log.warn(outContent.toString());
-//            Assertions.assertTrue(outContent.toString().contains("join"));
-//            Assertions.assertFalse(outContent.toString().contains("left join"));
-//            Assertions.assertFalse(outContent.toString().contains("left outer join"));
-//            System.setOut(originalOut);
-//        }
-//    }
-//
-//    @Test
-//    void whenManyToOneOptionalFalseFetchLazy_thenHibernateDoNotAnyJoinToRelatedTable() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 5")
-//                    .build();
-//            var user = UserWithManyToOneWithFetchLazy.builder()
-//                    .username("newUser 5")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(company);
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//
-//            System.setOut(new PrintStream(outContent));
-//            @SuppressWarnings("unused")
-//            var foundedEntity = session.find(UserWithManyToOneWithFetchLazy.class, user.getId());
-//            log.warn(outContent.toString());
-//            Assertions.assertFalse(outContent.toString().contains("join"));
-//            System.setOut(originalOut);
-//        }
-//    }
-//
-//    @Test
-//    void persistManyEntity_whenManyToOneCascadeTypePersis_thenHibernateSaveOneEntityBeforeMany() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 6")
-//                    .build();
-//            var user = UserWithCascadeTypeAll.builder()
-//                    .username("newUser 6")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//            var foundedUser = session.find(UserWithCascadeTypeAll.class, user.getId());
-//            Assertions.assertEquals(user, foundedUser);
-//            Assertions.assertEquals(company, foundedUser.getCompany());
-//        }
-//    }
-//
-//    @Test
-//    void mergeManyEntity_whenManyToOneCascadeTypeMerge_thenHibernateSaveOrUpdateOneEntityBeforeMany() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 7")
-//                    .build();
-//            var defaultUserKey = 1L;
-//            var user = session.find(UserWithCascadeTypeAll.class, defaultUserKey);
-//            user.setCompany(company);
-//
-//            session.merge(user);
-//            transaction.commit();
-//            session.clear();
-//
-//            var foundedUser = session.find(UserWithCascadeTypeAll.class, user.getId());
-//            Assertions.assertEquals(user, foundedUser);
-//            Assertions.assertNotNull(foundedUser.getCompany());
-//            Assertions.assertNotNull(foundedUser.getCompany().getId());
-//            Assertions.assertEquals(company.getName(), foundedUser.getCompany().getName());
-//        }
-//    }
-//
-//    @Test
-//    void removeManyEntity_whenManyToOneCascadeTypeRemove_thenHibernateRemoveManyEntityBeforeOne() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//            var company = CompanyManyToOne.builder()
-//                    .name("Default CompanyManyToOne 8")
-//                    .build();
-//            var user = UserWithCascadeTypeAll.builder()
-//                    .username("newUser 8")
-//                    .company(company)
-//                    .build();
-//
-//            session.persist(user);
-//            transaction.commit();
-//            session.clear();
-//
-//            session.beginTransaction();
-//            Assertions.assertEquals(user, session.find(UserWithCascadeTypeAll.class, user.getId()));
-//            session.clear();
-//
-//            session.remove(user);
-//            session.getTransaction().commit();
-//
-//            Assertions.assertNull(session.find(UserWithCascadeTypeAll.class, user.getId()));
-//        }
-//    }
-//
-//    @Test
-//    void refreshManyEntity_whenManyToOneCascadeTypeRefresh_thenHibernateRefreshOneEntityBeforeMany() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//
-//            var userWithCompany = session.find(UserWithCascadeTypeAll.class, 4L);
-//            var company = userWithCompany.getCompany();
-//
-//            Assertions.assertNull(userWithCompany.getPersonalInfo());
-//            Assertions.assertNull(userWithCompany.getRole());
-//            userWithCompany.setPersonalInfo(PersonalInfo.builder()
-//                    .firstname("Ivan")
-//                    .lastname("Ivanov")
-//                    .birthdate(new Birthday(LocalDate.of(1990, 1, 1)))
-//                    .build());
-//            userWithCompany.setRole(Role.ADMIN);
-//
-//            var companyName = company.getName();
-//            company.setName(companyName + "Changed");
-//
-//
-//            session.refresh(userWithCompany);
-//            transaction.commit();
-//            session.clear();
-//
-//            Assertions.assertNull(userWithCompany.getPersonalInfo());
-//            Assertions.assertNull(userWithCompany.getRole());
-//            Assertions.assertEquals(companyName, userWithCompany.getCompany().getName());
-//        }
-//    }
-//
-//    @Test
-//    void detachManyEntity_whenManyToOneCascadeTypeDetach_thenHibernateDetachManyAndOneEntity() {
-//        try (var session = sessionFactory.openSession()) {
-//            var transaction = session.beginTransaction();
-//
-//            var userWithCompany = session.find(UserWithCascadeTypeAll.class, 4L);
-//            var company = userWithCompany.getCompany();
-//
-//            Assertions.assertTrue(session.contains(userWithCompany));
-//            Assertions.assertTrue(session.contains(company));
-//
-//            session.detach(userWithCompany);
-//            transaction.commit();
-//
-//            Assertions.assertFalse(session.contains(userWithCompany));
-//            Assertions.assertFalse(session.contains(company));
-//        }
-//    }
+    @Test
+    void findOneEntity_whenFieldWithManyRelationExcludedFromToStringAndEqualsAndHashCodeMethods_thenOk() {
+        try (var session = sessionFactory.openSession()) {
+
+            var company =
+                    session.find(CompanyForOneToManyTests.class, 1L);
+            Assertions.assertDoesNotThrow(company::toString);
+        }
+    }
+
+    @Test
+    void persist_whenManyEntitiesNotPersisted_thenHibernateSaveOnlyOneEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyForOneToManyTests.builder()
+                    .name("Default Company 1")
+                    .build();
+            var user = UserForOneToManyTests.builder()
+                    .username("newUser 1")
+                    .build();
+
+            company.addUser(user);
+
+            session.persist(company);
+            Assertions.assertDoesNotThrow(transaction::commit);
+            session.clear();
+            Assertions.assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
+        }
+    }
+
+
+    @Test
+    void whenOneToManyFetchLazy_thenHibernateDoNotAnyJoinToTableMappedByManyEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyForOneToManyTests.builder()
+                    .name("Default Company 2")
+                    .build();
+            var user = UserForOneToManyTests.builder()
+                    .username("newUser 2")
+                    .company(company)
+                    .build();
+
+            session.persist(company);
+            session.persist(user);
+            transaction.commit();
+            session.clear();
+
+
+            System.setOut(new PrintStream(outContent));
+            @SuppressWarnings("unused")
+            var foundedEntity = session.find(UserWithManyToOneWithFetchLazy.class, user.getId());
+            log.warn(outContent.toString());
+            Assertions.assertFalse(outContent.toString().contains("join"));
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void whenOneToManyFetchEager_thenHibernateDoLeftJoinToTableMappedByManyEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyWithOneToManyWithFetchEager.builder()
+                    .name("Default Company 3")
+                    .build();
+            var user = UserForOneToManyFetchEagerTests.builder()
+                    .username("newUser 3")
+                    .company(company)
+                    .build();
+            company.addUser(user);
+
+            session.persist(company);
+            session.persist(user);
+            transaction.commit();
+            session.clear();
+
+
+            System.setOut(new PrintStream(outContent));
+            @SuppressWarnings("unused")
+            var foundedEntity = session.find(CompanyWithOneToManyWithFetchEager.class, company.getId());
+            var query = outContent.toString()
+                    .replaceAll("[\\t\\n\\r]+", " ")
+                    .replaceAll(" +", " ")
+                    .trim();
+            log.warn(outContent.toString());
+            Assertions.assertTrue(query.contains("left join users"));
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void persistOneEntity_whenOneToManyCascadeTypePersis_thenHibernateSaveOneEntityBeforeMany() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyForOneToManyTests.builder()
+                    .name("Default Company 4")
+                    .build();
+            var user = UserForOneToManyTests.builder()
+                    .username("newUser 4")
+                    .build();
+            company.addUser(user);
+            var users = company.getUsers();
+
+            session.persist(company);
+            transaction.commit();
+            session.clear();
+
+            var foundedCompany = session.find(CompanyForOneToManyTests.class, company.getId());
+            Assertions.assertEquals(company, foundedCompany);
+            //noinspection RedundantCast,rawtypes
+            Assertions.assertEquals((Set) foundedCompany.getUsers(), (Set) users);
+        }
+    }
+
+    @Test
+    void persistManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateThrowsTransientObjectException() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = Company.builder()
+                    .name("Default Company 5")
+                    .build();
+            var user = User.builder()
+                    .username("newUser 5")
+                    .company(company)
+                    .build();
+
+            session.persist(user);
+            var exception = Assertions.assertThrows(IllegalStateException.class, transaction::commit);
+            Assertions.assertEquals(TransientObjectException.class, exception.getCause().getClass());
+            transaction.rollback();
+        }
+    }
+
+    @Test
+    void mergeOneEntity_whenOneToManyCascadeTypeMerge_thenHibernateSaveOrUpdateOneEntityBeforeMany() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyForOneToManyTests.builder()
+                    .name("Default Company 6")
+                    .build();
+            var defaultUserKey = 1L;
+            var user = session.find(UserForOneToManyTests.class, defaultUserKey);
+            var oldUserCompany = user.getCompany();
+            Assertions.assertNotEquals(oldUserCompany, company);
+            company.addUser(user);
+
+            company = session.merge(company);
+            transaction.commit();
+            session.clear();
+
+            var foundedCompany = session.find(CompanyForOneToManyTests.class, company.getId());
+            Assertions.assertEquals(company, foundedCompany);
+            Assertions.assertNotNull(foundedCompany.getUsers());
+            Assertions.assertFalse(foundedCompany.getUsers().isEmpty());
+            var userFromFoundedCompany = company.getUsers().stream().findFirst().orElseThrow();
+            Assertions.assertEquals(user, userFromFoundedCompany);
+            Assertions.assertNotEquals(oldUserCompany, userFromFoundedCompany.getCompany());
+            Assertions.assertEquals(company, userFromFoundedCompany.getCompany());
+        }
+    }
+
+    @Test
+    void mergeOneEntity_whenOneToManyCascadeTypeMerge_thenHibernateThrowsTransientObjectException() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyWithoutCascadeTypes.builder()
+                    .name("Default Company 7")
+                    .build();
+            var defaultUserKey = 1L;
+            var user = session.find(UserForOneToManyWithoutCascadeTypes.class, defaultUserKey);
+            company.addUser(user);
+
+            session.merge(company);
+            var exception = Assertions.assertThrows(IllegalStateException.class, transaction::commit);
+            Assertions.assertEquals(TransientObjectException.class, exception.getCause().getClass());
+            transaction.rollback();
+        }
+    }
+
+    @Test
+    void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateRemoveManyEntityBeforeOne() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            var company = CompanyForOneToManyTests.builder()
+                    .name("Default Company 8")
+                    .build();
+            var user = UserForOneToManyTests.builder()
+                    .username("newUser 8")
+                    .build();
+            company.addUser(user);
+
+            session.persist(company);
+            transaction.commit();
+            session.clear();
+
+            session.beginTransaction();
+            Assertions.assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
+            Assertions.assertEquals(user, session.find(UserForOneToManyTests.class, user.getId()));
+            session.clear();
+
+            session.remove(company);
+            session.getTransaction().commit();
+
+            Assertions.assertNull(session.find(CompanyForOneToManyTests.class, company.getId()));
+            Assertions.assertNull(session.find(UserForOneToManyTests.class, user.getId()));
+        }
+    }
+
+    @Test
+    void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateThrowsConstraintViolationException() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            var company = CompanyWithoutCascadeTypes.builder()
+                    .name("Default Company 9")
+                    .build();
+            var user = UserForOneToManyWithoutCascadeTypes.builder()
+                    .username("newUser 9")
+                    .build();
+            company.addUser(user);
+
+            session.persist(company);
+            session.persist(user);
+            session.getTransaction().commit();
+            session.clear();
+
+            var transaction = session.beginTransaction();
+            session.remove(company);
+            var exception = Assertions.assertThrows(PersistenceException.class, transaction::commit);
+            Assertions.assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
+            transaction.rollback();
+        }
+    }
+
+    @Test
+    void refreshOneEntity_whenOneToManyCascadeTypeRefresh_thenHibernateRefreshOneEntityBeforeMany() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var company = session.find(CompanyForOneToManyTests.class, 1L);
+            var user = company.getUsers().stream().findFirst().orElseThrow();
+
+            var newCompanyName = "new CompanyName";
+            var oldCompanyName = company.getName();
+            Assertions.assertNotEquals(newCompanyName, oldCompanyName);
+            company.setName(newCompanyName);
+
+            var oldUserName = user.getUsername();
+            var newUsername = "new Username";
+            user.setUsername(newUsername);
+
+
+            session.refresh(company);
+            transaction.commit();
+            session.clear();
+
+            Assertions.assertEquals(oldCompanyName, company.getName());
+            Assertions.assertEquals(oldUserName, user.getUsername());
+        }
+    }
+
+    @Test
+    void refreshOneEntity_whenOneToManyCascadeTypeRefresh_thenHibernateRefreshOnlyOneEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var company = session.find(CompanyWithoutCascadeTypes.class, 1L);
+            var user = company.getUsers().stream().findFirst().orElseThrow();
+
+            var newCompanyName = "new CompanyName";
+            var oldCompanyName = company.getName();
+            Assertions.assertNotEquals(newCompanyName, oldCompanyName);
+            company.setName(newCompanyName);
+
+            var oldUserName = user.getUsername();
+            var newUsername = "new Username";
+            user.setUsername(newUsername);
+
+
+            session.refresh(company);
+            transaction.commit();
+
+            Assertions.assertEquals(oldCompanyName, company.getName());
+            Assertions.assertEquals(newUsername, user.getUsername());
+            Assertions.assertNotEquals(oldUserName, user.getUsername());
+        }
+    }
+
+    @Test
+    void detachOneEntity_whenOneToManyCascadeTypeDetach_thenHibernateDetachManyAndOneEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var company = session.find(CompanyForOneToManyTests.class, 1L);
+            var user = company.getUsers().stream().findFirst().orElseThrow();
+
+            Assertions.assertTrue(session.contains(company));
+            Assertions.assertTrue(session.contains(user));
+
+            session.detach(company);
+            transaction.commit();
+
+            Assertions.assertFalse(session.contains(company));
+            Assertions.assertFalse(session.contains(user));
+        }
+    }
+
+    @Test
+    void detachManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateDetachOnlyManyEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var company = session.find(CompanyWithoutCascadeTypes.class, 1L);
+            var user = company.getUsers().stream().findFirst().orElseThrow();
+
+            Assertions.assertTrue(session.contains(company));
+            Assertions.assertTrue(session.contains(user));
+
+            session.detach(company);
+            transaction.commit();
+
+            Assertions.assertFalse(session.contains(company));
+            Assertions.assertTrue(session.contains(user));
+        }
+    }
 
 }

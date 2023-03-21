@@ -22,5 +22,5 @@ public class UserWithCascadeTypeAll {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
-    CompanyManyToOne company;
+    CompanyForManyToOneTests company;
 }
