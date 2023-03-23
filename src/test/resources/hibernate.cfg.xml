@@ -33,17 +33,23 @@
         <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithFetchLazy"/>
         <mapping class="com.example.hibernate.many.to.one.UserWithCascadeTypeAll"/>
 
-        <mapping class="com.example.hibernate.one.to.many.CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
-        <mapping class="com.example.hibernate.one.to.many.UserForStackOverFlowExceptionThrowingTests"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
         <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTests"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTests"/>
-        <mapping class="com.example.hibernate.one.to.many.CompanyWithOneToManyWithFetchEager"/>
-        <mapping class="com.example.hibernate.one.to.many.CompanyWithoutCascadeTypesAndOrphanRemovalFalse"/>
-        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyFetchEagerTests"/>
-        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithFetchEager"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithFetchEager"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
 
-        <mapping class="com.example.hibernate.one.to.one.ProfileForOneToOneTests"/>
-        <mapping class="com.example.hibernate.one.to.one.UserForOneToOneTests"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTestsWithFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTestsOwningSideFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTestsWithoutCascadeTypes"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

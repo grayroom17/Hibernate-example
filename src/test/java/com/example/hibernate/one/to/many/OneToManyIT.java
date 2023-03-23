@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import java.io.PrintStream;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @Slf4j
 class OneToManyIT extends BaseIT {
 
@@ -22,7 +24,7 @@ class OneToManyIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
 
             var company =
-                    session.find(CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods.class, 1L);
+                    session.find(CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods.class, 1L);
             //noinspection ResultOfMethodCallIgnored
             Assertions.assertThrows(StackOverflowError.class, company::toString);
         }
@@ -54,7 +56,7 @@ class OneToManyIT extends BaseIT {
             session.persist(company);
             Assertions.assertDoesNotThrow(transaction::commit);
             session.clear();
-            Assertions.assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
+            assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
         }
     }
 
@@ -90,10 +92,10 @@ class OneToManyIT extends BaseIT {
     void whenOneToManyFetchEager_thenHibernateDoLeftJoinToTableMappedByManyEntity() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = CompanyWithOneToManyWithFetchEager.builder()
+            var company = CompanyForOneToManyTestsWithFetchEager.builder()
                     .name("Default Company 3")
                     .build();
-            var user = UserForOneToManyFetchEagerTests.builder()
+            var user = UserForOneToManyTestsWithFetchEager.builder()
                     .username("newUser 3")
                     .company(company)
                     .build();
@@ -107,7 +109,7 @@ class OneToManyIT extends BaseIT {
 
             System.setOut(new PrintStream(outContent));
             @SuppressWarnings("unused")
-            var foundedEntity = session.find(CompanyWithOneToManyWithFetchEager.class, company.getId());
+            var foundedEntity = session.find(CompanyForOneToManyTestsWithFetchEager.class, company.getId());
             var query = outContent.toString()
                     .replaceAll("[\\t\\n\\r]+", " ")
                     .replaceAll(" +", " ")
@@ -136,16 +138,16 @@ class OneToManyIT extends BaseIT {
             session.clear();
 
             var foundedCompany = session.find(CompanyForOneToManyTests.class, company.getId());
-            Assertions.assertEquals(company, foundedCompany);
+            assertEquals(company, foundedCompany);
             //noinspection RedundantCast,rawtypes
-            Assertions.assertEquals((Set) foundedCompany.getUsers(), (Set) users);
+            assertEquals((Set) foundedCompany.getUsers(), (Set) users);
         }
     }
 
     @Test
-    void persistManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateThrowsTransientObjectException() {
+    void persistInverseSide_whenInverseSideWithoutCascadeTypes_thenHibernateSaveOnlyInverseSide() {
         try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
+            session.beginTransaction();
             var company = Company.builder()
                     .name("Default Company 5")
                     .build();
@@ -153,11 +155,16 @@ class OneToManyIT extends BaseIT {
                     .username("newUser 5")
                     .company(company)
                     .build();
+            company.addUser(user);
 
-            session.persist(user);
-            var exception = Assertions.assertThrows(IllegalStateException.class, transaction::commit);
-            Assertions.assertEquals(TransientObjectException.class, exception.getCause().getClass());
-            transaction.rollback();
+            session.persist(company);
+            session.getTransaction().commit();
+            session.clear();
+
+            var foundedCompany = session.find(Company.class, company.getId());
+            assertEquals(company,foundedCompany);
+            assertFalse(company.getUsers().isEmpty());
+            assertTrue(foundedCompany.getUsers().isEmpty());
         }
     }
 
@@ -179,30 +186,30 @@ class OneToManyIT extends BaseIT {
             session.clear();
 
             var foundedCompany = session.find(CompanyForOneToManyTests.class, company.getId());
-            Assertions.assertEquals(company, foundedCompany);
+            assertEquals(company, foundedCompany);
             Assertions.assertNotNull(foundedCompany.getUsers());
             Assertions.assertFalse(foundedCompany.getUsers().isEmpty());
             var userFromFoundedCompany = company.getUsers().stream().findFirst().orElseThrow();
-            Assertions.assertEquals(user, userFromFoundedCompany);
+            assertEquals(user, userFromFoundedCompany);
             Assertions.assertNotEquals(oldUserCompany, userFromFoundedCompany.getCompany());
-            Assertions.assertEquals(company, userFromFoundedCompany.getCompany());
+            assertEquals(company, userFromFoundedCompany.getCompany());
         }
     }
 
     @Test
-    void mergeOneEntity_whenOneToManyCascadeTypeMerge_thenHibernateThrowsTransientObjectException() {
+    void mergeOneEntity_whenOneToManyWithoutCascadeTypes_thenHibernateThrowsTransientObjectException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = CompanyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var company = CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .name("Default Company 7")
                     .build();
             var defaultUserKey = 1L;
-            var user = session.find(UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse.class, defaultUserKey);
+            var user = session.find(UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, defaultUserKey);
             company.addUser(user);
 
             session.merge(company);
             var exception = Assertions.assertThrows(IllegalStateException.class, transaction::commit);
-            Assertions.assertEquals(TransientObjectException.class, exception.getCause().getClass());
+            assertEquals(TransientObjectException.class, exception.getCause().getClass());
             transaction.rollback();
         }
     }
@@ -224,26 +231,26 @@ class OneToManyIT extends BaseIT {
             session.clear();
 
             session.beginTransaction();
-            Assertions.assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
-            Assertions.assertEquals(user, session.find(UserForOneToManyTests.class, user.getId()));
+            assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
+            assertEquals(user, session.find(UserForOneToManyTests.class, user.getId()));
             session.clear();
 
             session.remove(company);
             session.getTransaction().commit();
 
-            Assertions.assertNull(session.find(CompanyForOneToManyTests.class, company.getId()));
-            Assertions.assertNull(session.find(UserForOneToManyTests.class, user.getId()));
+            assertNull(session.find(CompanyForOneToManyTests.class, company.getId()));
+            assertNull(session.find(UserForOneToManyTests.class, user.getId()));
         }
     }
 
     @Test
-    void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateThrowsConstraintViolationException() {
+    void removeOneEntity_whenOneToManyWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var company = CompanyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var company = CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .name("Default Company 9")
                     .build();
-            var user = UserForOneToManyWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var user = UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .username("newUser 9")
                     .build();
             company.addUser(user);
@@ -256,7 +263,7 @@ class OneToManyIT extends BaseIT {
             var transaction = session.beginTransaction();
             session.remove(company);
             var exception = Assertions.assertThrows(PersistenceException.class, transaction::commit);
-            Assertions.assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
+            assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
             transaction.rollback();
         }
     }
@@ -283,17 +290,17 @@ class OneToManyIT extends BaseIT {
             transaction.commit();
             session.clear();
 
-            Assertions.assertEquals(oldCompanyName, company.getName());
-            Assertions.assertEquals(oldUserName, user.getUsername());
+            assertEquals(oldCompanyName, company.getName());
+            assertEquals(oldUserName, user.getUsername());
         }
     }
 
     @Test
-    void refreshOneEntity_whenOneToManyCascadeTypeRefresh_thenHibernateRefreshOnlyOneEntity() {
+    void refreshOneEntity_whenOneToManyWithoutCascadeTypes_thenHibernateRefreshOnlyOneEntity() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
             var user = company.getUsers().stream().findFirst().orElseThrow();
 
             var newCompanyName = "new CompanyName";
@@ -309,8 +316,8 @@ class OneToManyIT extends BaseIT {
             session.refresh(company);
             transaction.commit();
 
-            Assertions.assertEquals(oldCompanyName, company.getName());
-            Assertions.assertEquals(newUsername, user.getUsername());
+            assertEquals(oldCompanyName, company.getName());
+            assertEquals(newUsername, user.getUsername());
             Assertions.assertNotEquals(oldUserName, user.getUsername());
         }
     }
@@ -339,7 +346,7 @@ class OneToManyIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
             var user = company.getUsers().stream().findFirst().orElseThrow();
 
             Assertions.assertTrue(session.contains(company));
@@ -388,7 +395,7 @@ class OneToManyIT extends BaseIT {
             var companyId = 1L;
             var userId = 5L;
 
-            var company = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
+            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
             var users = company.getUsers();
             Assertions.assertNotNull(users.stream()
                     .filter(user -> user.getId().equals(userId))
@@ -399,7 +406,7 @@ class OneToManyIT extends BaseIT {
             session.getTransaction().commit();
             session.clear();
 
-            var companyAfterCommit = session.find(CompanyWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
+            var companyAfterCommit = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
             var usersAfterCommit = companyAfterCommit.getUsers();
             Assertions.assertNotNull(usersAfterCommit.stream()
                     .filter(user -> user.getId().equals(userId))

@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one;
+package com.example.hibernate.one.to.one.owningside;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneTests {
+public class ProfileForOneToOneOwningSideTests {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,10 @@ public class ProfileForOneToOneTests {
 
     String programmingLanguage;
 
-    @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    UserForOneToOneTests user;
+    UserForOneToOneOwningSideTests user;
 
 }

@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToManyFetchEagerTests {
+public class UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -21,5 +21,5 @@ public class UserForOneToManyFetchEagerTests {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
-    CompanyWithOneToManyWithFetchEager company;
+    CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse company;
 }

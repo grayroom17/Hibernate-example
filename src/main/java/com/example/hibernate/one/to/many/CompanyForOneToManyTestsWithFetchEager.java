@@ -14,7 +14,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "company")
-public class CompanyWithOneToManyWithFetchEager {
+public class CompanyForOneToManyTestsWithFetchEager {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -26,9 +26,9 @@ public class CompanyWithOneToManyWithFetchEager {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
-    Set<UserForOneToManyFetchEagerTests> users = new HashSet<>();
+    Set<UserForOneToManyTestsWithFetchEager> users = new HashSet<>();
 
-    public void addUser(UserForOneToManyFetchEagerTests user) {
+    public void addUser(UserForOneToManyTestsWithFetchEager user) {
         users.add(user);
         user.setCompany(this);
     }

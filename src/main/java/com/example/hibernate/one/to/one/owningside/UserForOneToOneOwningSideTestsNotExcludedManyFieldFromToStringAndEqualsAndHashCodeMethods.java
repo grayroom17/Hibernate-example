@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one;
+package com.example.hibernate.one.to.one.owningside;
 
 import com.example.hibernate.entity.Company;
 import com.example.hibernate.entity.PersonalInfo;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneTests {
+public class UserForOneToOneOwningSideTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -37,12 +37,10 @@ public class UserForOneToOneTests {
     @JoinColumn(name = "company_id")
     Company company;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    ProfileForOneToOneTests profile;
+    ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods profile;
 
-    public void setProfile(ProfileForOneToOneTests profile) {
+    public void setProfile(ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods profile) {
         this.profile = profile;
         profile.setUser(this);
     }

@@ -6,23 +6,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "company")
-public class CompanyWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods {
+@Table(name = "users")
+public class UserForOneToManyTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(unique = true)
-    String name;
+    String username;
 
-    @OneToMany(mappedBy = "company")
-    List<UserForStackOverFlowExceptionThrowingTests> users;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods company;
 }

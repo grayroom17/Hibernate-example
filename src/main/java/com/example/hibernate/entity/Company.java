@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -22,6 +23,12 @@ public class Company {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     @OneToMany(mappedBy = "company")
-    List<User> users;
+    List<User> users = new ArrayList<>();
+
+    public void addUser(User user) {
+        users.add(user);
+        user.setCompany(this);
+    }
 }
