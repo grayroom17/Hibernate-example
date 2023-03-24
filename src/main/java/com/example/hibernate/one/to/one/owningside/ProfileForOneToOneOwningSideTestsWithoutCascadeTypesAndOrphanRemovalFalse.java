@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneOwningSideTestsWithoutCascadeTypes {
+public class ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -38,9 +38,9 @@ public class UserForOneToOneOwningSideTestsWithoutCascadeTypes {
     Company company;
 
     @OneToOne(mappedBy = "user")
-    ProfileForOneToOneOwningSideTestsWithoutCascadeTypes profile;
+    ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse profile;
 
-    public void setProfile(ProfileForOneToOneOwningSideTestsWithoutCascadeTypes profile) {
+    public void setProfile(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse profile) {
         this.profile = profile;
         profile.setUser(this);
     }

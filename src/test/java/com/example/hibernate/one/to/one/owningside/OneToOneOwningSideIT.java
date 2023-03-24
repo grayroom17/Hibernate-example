@@ -1,21 +1,14 @@
 package com.example.hibernate.one.to.one.owningside;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.entity.Company;
-import com.example.hibernate.entity.User;
-import com.example.hibernate.one.to.many.CompanyForOneToManyTests;
-import com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse;
-import com.example.hibernate.one.to.many.UserForOneToManyTests;
-import com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.TransientObjectException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
-import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 class OneToOneOwningSideIT extends BaseIT {
@@ -27,7 +20,7 @@ class OneToOneOwningSideIT extends BaseIT {
             var profile =
                     session.find(ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods.class, 1L);
             //noinspection ResultOfMethodCallIgnored
-            Assertions.assertThrows(StackOverflowError.class, profile::toString);
+            assertThrows(StackOverflowError.class, profile::toString);
         }
     }
 
@@ -37,7 +30,7 @@ class OneToOneOwningSideIT extends BaseIT {
 
             var profile =
                     session.find(ProfileForOneToOneOwningSideTests.class, 1L);
-            Assertions.assertDoesNotThrow(profile::toString);
+            assertDoesNotThrow(profile::toString);
         }
     }
 
@@ -51,7 +44,7 @@ class OneToOneOwningSideIT extends BaseIT {
             var foundedEntity =
                     session.find(ProfileForOneToOneOwningSideTestsWithFetchLazy.class, profileId);
             log.warn(outContent.toString());
-            Assertions.assertFalse(outContent.toString().contains("join"));
+            assertFalse(outContent.toString().contains("join"));
             System.setOut(originalOut);
         }
     }
@@ -68,7 +61,7 @@ class OneToOneOwningSideIT extends BaseIT {
                     .replaceAll(" +", " ")
                     .trim();
             log.warn(outContent.toString());
-            Assertions.assertTrue(query.contains("left join users"));
+            assertTrue(query.contains("left join users"));
             System.setOut(originalOut);
         }
     }
@@ -91,8 +84,8 @@ class OneToOneOwningSideIT extends BaseIT {
             session.clear();
 
             var foundedProfile = session.find(ProfileForOneToOneOwningSideTests.class, profile.getId());
-            Assertions.assertEquals(profile, foundedProfile);
-            Assertions.assertEquals(user, foundedProfile.getUser());
+            assertEquals(profile, foundedProfile);
+            assertEquals(user, foundedProfile.getUser());
         }
     }
 
@@ -100,18 +93,18 @@ class OneToOneOwningSideIT extends BaseIT {
     void persistOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
                     .language("UA")
                     .programmingLanguage("C")
                     .build();
             var user = UserForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
-                    .username("newUser 5")
+                    .username("newUser 2")
                     .build();
             user.setProfile(profile);
 
-            var exception = Assertions.assertThrows(PersistenceException.class,
+            var exception = assertThrows(PersistenceException.class,
                     () -> session.persist(profile));
-            Assertions.assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
+            assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
             transaction.rollback();
         }
     }
@@ -134,229 +127,221 @@ class OneToOneOwningSideIT extends BaseIT {
             session.clear();
 
             var foundedProfile = session.find(ProfileForOneToOneOwningSideTests.class, profile.getId());
-            Assertions.assertEquals(profile, foundedProfile);
-            Assertions.assertNotNull(foundedProfile.getUser());
-            var userFromFoundedProfile = profile.getUser();
-            Assertions.assertEquals(profile, userFromFoundedProfile.getProfile());
-            Assertions.assertEquals(profile.getUser(), userFromFoundedProfile);
+            assertEquals(profile, foundedProfile);
+            assertEquals(profile.getUser(), foundedProfile.getUser());
         }
     }
 
     @Test
-    void mergeOneEntity_whenOneToManyCascadeTypeMerge_thenHibernateThrowsTransientObjectException() {
+    void mergeOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
-                    .name("Default Company 7")
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+                    .language("UZ")
+                    .programmingLanguage("JavaScript")
                     .build();
-            var defaultUserKey = 1L;
-            var user = session.find(UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, defaultUserKey);
-            company.addUser(user);
+            var user = UserForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
+                    .username("newUser 4")
+                    .build();
+            user.setProfile(profile);
 
-            session.merge(company);
-            var exception = Assertions.assertThrows(IllegalStateException.class, transaction::commit);
-            Assertions.assertEquals(TransientObjectException.class, exception.getCause().getClass());
+            var exception = assertThrows(PersistenceException.class,
+                    () -> session.merge(profile));
+            assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
             transaction.rollback();
         }
     }
 
     @Test
-    void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateRemoveManyEntityBeforeOne() {
+    void removeOwningSideEntity_whenOwningSideCascadeTypeRemove_thenHibernateRemoveOwningSideBeforeInverse() {
         try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
-            var company = CompanyForOneToManyTests.builder()
-                    .name("Default Company 8")
+            session.beginTransaction();
+            var profile = ProfileForOneToOneOwningSideTests.builder()
+                    .language("BY")
+                    .programmingLanguage("Python")
                     .build();
-            var user = UserForOneToManyTests.builder()
-                    .username("newUser 8")
+            var user = UserForOneToOneOwningSideTests.builder()
+                    .username("newUser 5")
                     .build();
-            company.addUser(user);
+            user.setProfile(profile);
 
-            session.persist(company);
-            transaction.commit();
+            session.persist(profile);
+            session.getTransaction().commit();
             session.clear();
 
             session.beginTransaction();
-            Assertions.assertEquals(company, session.find(CompanyForOneToManyTests.class, company.getId()));
-            Assertions.assertEquals(user, session.find(UserForOneToManyTests.class, user.getId()));
+            assertEquals(profile, session.find(ProfileForOneToOneOwningSideTests.class, profile.getId()));
+            assertEquals(user, session.find(UserForOneToOneOwningSideTests.class, user.getId()));
             session.clear();
 
-            session.remove(company);
+            session.remove(profile);
             session.getTransaction().commit();
 
-            Assertions.assertNull(session.find(CompanyForOneToManyTests.class, company.getId()));
-            Assertions.assertNull(session.find(UserForOneToManyTests.class, user.getId()));
+            assertNull(session.find(ProfileForOneToOneOwningSideTests.class, profile.getId()));
+            assertNull(session.find(UserForOneToOneOwningSideTests.class, user.getId()));
         }
     }
 
     @Test
-    void removeOneEntity_whenOneToManyCascadeTypeRemove_thenHibernateThrowsConstraintViolationException() {
+    void removeOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateDeleteOnlyOwningSideEntity() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var company = CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
-                    .name("Default Company 9")
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+                    .language("IT")
+                    .programmingLanguage("Scala")
                     .build();
-            var user = UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
-                    .username("newUser 9")
+            var user = UserForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
+                    .username("newUser 6")
                     .build();
-            company.addUser(user);
+            user.setProfile(profile);
 
-            session.persist(company);
             session.persist(user);
+            session.persist(profile);
             session.getTransaction().commit();
             session.clear();
 
-            var transaction = session.beginTransaction();
-            session.remove(company);
-            var exception = Assertions.assertThrows(PersistenceException.class, transaction::commit);
-            Assertions.assertEquals(ConstraintViolationException.class, exception.getCause().getClass());
-            transaction.rollback();
+            session.beginTransaction();
+            session.remove(profile);
+            session.getTransaction().commit();
+            assertNull(session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, profile.getId()));
+            assertNotNull(session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, user.getId()));
         }
     }
 
     @Test
-    void refreshOneEntity_whenOneToManyCascadeTypeRefresh_thenHibernateRefreshOneEntityBeforeMany() {
-        try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
-
-            var company = session.find(CompanyForOneToManyTests.class, 1L);
-            var user = company.getUsers().stream().findFirst().orElseThrow();
-
-            var newCompanyName = "new CompanyName";
-            var oldCompanyName = company.getName();
-            Assertions.assertNotEquals(newCompanyName, oldCompanyName);
-            company.setName(newCompanyName);
-
-            var oldUserName = user.getUsername();
-            var newUsername = "new Username";
-            user.setUsername(newUsername);
-
-
-            session.refresh(company);
-            transaction.commit();
-            session.clear();
-
-            Assertions.assertEquals(oldCompanyName, company.getName());
-            Assertions.assertEquals(oldUserName, user.getUsername());
-        }
-    }
-
-    @Test
-    void refreshOneEntity_whenOneToManyCascadeTypeRefresh_thenHibernateRefreshOnlyOneEntity() {
-        try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
-
-            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
-            var user = company.getUsers().stream().findFirst().orElseThrow();
-
-            var newCompanyName = "new CompanyName";
-            var oldCompanyName = company.getName();
-            Assertions.assertNotEquals(newCompanyName, oldCompanyName);
-            company.setName(newCompanyName);
-
-            var oldUserName = user.getUsername();
-            var newUsername = "new Username";
-            user.setUsername(newUsername);
-
-
-            session.refresh(company);
-            transaction.commit();
-
-            Assertions.assertEquals(oldCompanyName, company.getName());
-            Assertions.assertEquals(newUsername, user.getUsername());
-            Assertions.assertNotEquals(oldUserName, user.getUsername());
-        }
-    }
-
-    @Test
-    void detachOneEntity_whenOneToManyCascadeTypeDetach_thenHibernateDetachManyAndOneEntity() {
-        try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
-
-            var company = session.find(CompanyForOneToManyTests.class, 1L);
-            var user = company.getUsers().stream().findFirst().orElseThrow();
-
-            Assertions.assertTrue(session.contains(company));
-            Assertions.assertTrue(session.contains(user));
-
-            session.detach(company);
-            transaction.commit();
-
-            Assertions.assertFalse(session.contains(company));
-            Assertions.assertFalse(session.contains(user));
-        }
-    }
-
-    @Test
-    void detachManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateDetachOnlyManyEntity() {
-        try (var session = sessionFactory.openSession()) {
-            var transaction = session.beginTransaction();
-
-            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
-            var user = company.getUsers().stream().findFirst().orElseThrow();
-
-            Assertions.assertTrue(session.contains(company));
-            Assertions.assertTrue(session.contains(user));
-
-            session.detach(company);
-            transaction.commit();
-
-            Assertions.assertFalse(session.contains(company));
-            Assertions.assertTrue(session.contains(user));
-        }
-    }
-
-    @Test
-    void oneToManyOrphanRemovalTrue_whenDeleteObjectFromCollectionUnderMany_thenHibernateDeleteObjectRelatedToCollectionUnderMany() {
+    void refreshOwningSideEntity_whenOwningSideCascadeTypeRefresh_thenHibernateRefreshBothSide() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            var companyId = 1L;
-            var userId = 6L;
+            var profile = session.find(ProfileForOneToOneOwningSideTests.class, 2L);
+            var user = profile.getUser();
 
-            var company = session.find(CompanyForOneToManyTests.class, companyId);
-            var users = company.getUsers();
-            Assertions.assertNotNull(users.stream()
-                    .filter(user -> user.getId().equals(userId))
-                    .findAny().orElseThrow());
+            var newProfileProgrammingLanguage = "Cobol";
+            var oldProfileProgrammingLanguage = profile.getProgrammingLanguage();
+            assertNotEquals(newProfileProgrammingLanguage, oldProfileProgrammingLanguage);
+            profile.setProgrammingLanguage(newProfileProgrammingLanguage);
 
-            users.removeIf(user -> user.getId().equals(userId));
+            var newUsername = "new Username";
+            var oldUserName = user.getUsername();
+            assertNotEquals(newUsername, oldUserName);
+            user.setUsername(newUsername);
 
+            session.refresh(profile);
             session.getTransaction().commit();
             session.clear();
 
-            var companyAfterCommit = session.find(CompanyForOneToManyTests.class, companyId);
-            var usersAfterCommit = companyAfterCommit.getUsers();
-            Assertions.assertTrue(usersAfterCommit.stream()
-                    .filter(user -> user.getId().equals(userId))
-                    .findAny().isEmpty());
+            assertEquals(oldProfileProgrammingLanguage, profile.getProgrammingLanguage());
+            assertEquals(oldUserName, user.getUsername());
         }
     }
 
     @Test
-    void oneToManyOrphanRemovalFalse_whenDeleteObjectFromCollectionUnderMany_thenHibernateDoNotDeleteObjectRelatedToCollectionUnderMany() {
+    void refreshOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateRefreshOnlyOwningSide() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            var companyId = 1L;
-            var userId = 5L;
+            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var user = profile.getUser();
 
-            var company = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
-            var users = company.getUsers();
-            Assertions.assertNotNull(users.stream()
-                    .filter(user -> user.getId().equals(userId))
-                    .findAny().orElseThrow());
+            var newProfileProgrammingLanguage = "Cobol";
+            var oldProfileProgrammingLanguage = profile.getProgrammingLanguage();
+            assertNotEquals(newProfileProgrammingLanguage, oldProfileProgrammingLanguage);
+            profile.setProgrammingLanguage(newProfileProgrammingLanguage);
 
-            users.removeIf(user -> user.getId().equals(userId));
+            var newUsername = "new Username";
+            var oldUserName = user.getUsername();
+            assertNotEquals(newUsername, oldUserName);
+            user.setUsername(newUsername);
+
+            session.refresh(profile);
+            session.getTransaction().commit();
+
+            assertEquals(oldProfileProgrammingLanguage, profile.getProgrammingLanguage());
+            assertEquals(newUsername, user.getUsername());
+            assertNotEquals(oldUserName, user.getUsername());
+        }
+    }
+
+    @Test
+    void detachOwningSideEntity_whenOwningSideCascadeTypeDetach_thenHibernateDetachBothSides() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var profile = session.find(ProfileForOneToOneOwningSideTests.class, 1L);
+            var user = profile.getUser();
+
+            assertTrue(session.contains(profile));
+            assertTrue(session.contains(user));
+
+            session.detach(profile);
+            transaction.commit();
+
+            assertFalse(session.contains(profile));
+            assertFalse(session.contains(user));
+        }
+    }
+
+    @Test
+    void detachOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateDetachOnlyManyEntity() {
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+
+            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var user = profile.getUser();
+
+            assertTrue(session.contains(profile));
+            assertTrue(session.contains(user));
+
+            session.detach(profile);
+            transaction.commit();
+
+            assertFalse(session.contains(profile));
+            assertTrue(session.contains(user));
+        }
+    }
+
+    @Test
+    void owningSideEntityOrphanRemovalTrue_whenSetForOwningSideOtherInverseSideObject_thenHibernateDeleteOrphanedInverseSideObject() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var profileId = 3L;
+
+            var profile = session.find(ProfileForOneToOneOwningSideTests.class, profileId);
+            var user = profile.getUser();
+            assertNotNull(user);
+            var oldUserId = user.getId();
+            var otherUser = session.find(UserForOneToOneOwningSideTests.class, 1L);
+
+            profile.setUser(otherUser);
 
             session.getTransaction().commit();
             session.clear();
 
-            var companyAfterCommit = session.find(CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, companyId);
-            var usersAfterCommit = companyAfterCommit.getUsers();
-            Assertions.assertNotNull(usersAfterCommit.stream()
-                    .filter(user -> user.getId().equals(userId))
-                    .findAny().orElseThrow());
+            assertNull(session.find(UserForOneToOneOwningSideTests.class, oldUserId));
+        }
+    }
+
+    @Test
+    void owningSideEntityOrphanRemovalFalse_whenSetForOwningSideOtherInverseSideObject_thenHibernateDoNotDeleteOrphanedInverseSideObject() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var profileId = 1L;
+
+            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, profileId);
+            var user = profile.getUser();
+            assertNotNull(user);
+            var oldUserId = user.getId();
+            var otherUser = session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, 2L);
+
+            profile.setUser(otherUser);
+
+            session.getTransaction().commit();
+            session.clear();
+
+            var foundedUser = session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, oldUserId);
+            assertNotNull(foundedUser);
         }
     }
 

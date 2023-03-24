@@ -24,7 +24,7 @@ public class ProfileForOneToOneOwningSideTests {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     UserForOneToOneOwningSideTests user;
 
