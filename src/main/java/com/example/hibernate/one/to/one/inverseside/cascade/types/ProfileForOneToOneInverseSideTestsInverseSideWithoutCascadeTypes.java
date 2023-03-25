@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.one.to.one.inverseside.cascade.types;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods {
+public class ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +22,9 @@ public class ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToSt
 
     String programmingLanguage;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne
     @JoinColumn(name = "user_id")
-    UserForOneToOneOwningSideTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods user;
-
+    UserForOneToOneInverseSideTestsWithoutCascadeTypes user;
 }

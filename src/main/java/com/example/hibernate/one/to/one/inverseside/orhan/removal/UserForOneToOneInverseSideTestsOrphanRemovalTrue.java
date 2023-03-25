@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.one.to.one.inverseside.orhan.removal;
 
 import com.example.hibernate.entity.Company;
 import com.example.hibernate.entity.PersonalInfo;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneOwningSideTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods {
+public class UserForOneToOneInverseSideTestsOrphanRemovalTrue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -37,10 +37,10 @@ public class UserForOneToOneOwningSideTestsNotExcludedManyFieldFromToStringAndEq
     @JoinColumn(name = "company_id")
     Company company;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods profile;
+    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue profile;
 
-    public void setProfile(ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods profile) {
+    public void setProfile(ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue profile) {
         this.profile = profile;
         profile.setUser(this);
     }

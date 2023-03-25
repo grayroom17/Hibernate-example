@@ -1,6 +1,7 @@
 package com.example.hibernate.one.to.one.owningside;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.one.to.one.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -18,7 +19,7 @@ class OneToOneOwningSideIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
 
             var profile =
-                    session.find(ProfileForOneToOneOwningSideTestsWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods.class, 1L);
+                    session.find(ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods.class, 1L);
             //noinspection ResultOfMethodCallIgnored
             assertThrows(StackOverflowError.class, profile::toString);
         }
@@ -27,7 +28,6 @@ class OneToOneOwningSideIT extends BaseIT {
     @Test
     void findOwningSideEntity_whenInverseSideExcludedFromToStringAndEqualsAndHashCodeMethods_thenOk() {
         try (var session = sessionFactory.openSession()) {
-
             var profile =
                     session.find(ProfileForOneToOneOwningSideTests.class, 1L);
             assertDoesNotThrow(profile::toString);
@@ -39,10 +39,9 @@ class OneToOneOwningSideIT extends BaseIT {
     void whenOwningSideFetchLazy_thenHibernateDoNotAnyJoinToTableRelatedToInverseSide() {
         try (var session = sessionFactory.openSession()) {
             System.setOut(new PrintStream(outContent));
-            var profileId = 1L;
             @SuppressWarnings("unused")
             var foundedEntity =
-                    session.find(ProfileForOneToOneOwningSideTestsWithFetchLazy.class, profileId);
+                    session.find(ProfileForOneToOneOwningSideTestsWithFetchLazy.class, 1L);
             log.warn(outContent.toString());
             assertFalse(outContent.toString().contains("join"));
             System.setOut(originalOut);
@@ -53,9 +52,8 @@ class OneToOneOwningSideIT extends BaseIT {
     void whenOwningSideFetchEager_thenHibernateDoLeftJoinToTableRelatedToInverseSide() {
         try (var session = sessionFactory.openSession()) {
             System.setOut(new PrintStream(outContent));
-            var profileId = 1L;
             @SuppressWarnings("unused")
-            var foundedEntity = session.find(ProfileForOneToOneOwningSideTests.class, profileId);
+            var foundedEntity = session.find(ProfileForOneToOneOwningSideTests.class, 1L);
             var query = outContent.toString()
                     .replaceAll("[\\t\\n\\r]+", " ")
                     .replaceAll(" +", " ")
@@ -178,7 +176,7 @@ class OneToOneOwningSideIT extends BaseIT {
             session.getTransaction().commit();
 
             assertNull(session.find(ProfileForOneToOneOwningSideTests.class, profile.getId()));
-            assertNull(session.find(UserForOneToOneOwningSideTests.class, user.getId()));
+            assertNull(session.find(UserForOneToOneOwningSideTests.class, profile.getUser().getId()));
         }
     }
 
@@ -282,7 +280,7 @@ class OneToOneOwningSideIT extends BaseIT {
     }
 
     @Test
-    void detachOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateDetachOnlyManyEntity() {
+    void detachOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateDetachOnlyOwningSideEntity() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
@@ -306,7 +304,6 @@ class OneToOneOwningSideIT extends BaseIT {
             session.beginTransaction();
 
             var profileId = 3L;
-
             var profile = session.find(ProfileForOneToOneOwningSideTests.class, profileId);
             var user = profile.getUser();
             assertNotNull(user);
@@ -328,7 +325,6 @@ class OneToOneOwningSideIT extends BaseIT {
             session.beginTransaction();
 
             var profileId = 1L;
-
             var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, profileId);
             var user = profile.getUser();
             assertNotNull(user);

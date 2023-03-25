@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.one.to.one.inverseside.fetch.type.lazy;
 
 import com.example.hibernate.entity.Company;
 import com.example.hibernate.entity.PersonalInfo;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneOwningSideTestsOwningSideFetchLazy {
+public class UserForOneToOneInverseSideTestsInverseSideFetchLazy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -37,10 +37,10 @@ public class UserForOneToOneOwningSideTestsOwningSideFetchLazy {
     @JoinColumn(name = "company_id")
     Company company;
 
-    @OneToOne(mappedBy = "user")
-    ProfileForOneToOneOwningSideTestsWithFetchLazy profile;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    ProfileForOneToOneInverseSideTestsWithFetchLazy profile;
 
-    public void setProfile(ProfileForOneToOneOwningSideTestsWithFetchLazy profile) {
+    public void setProfile(ProfileForOneToOneInverseSideTestsWithFetchLazy profile) {
         this.profile = profile;
         profile.setUser(this);
     }
