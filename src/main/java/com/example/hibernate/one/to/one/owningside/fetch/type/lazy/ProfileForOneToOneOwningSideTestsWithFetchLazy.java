@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.one.to.one.owningside.fetch.type.lazy;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse {
+public class ProfileForOneToOneOwningSideTestsWithFetchLazy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,8 @@ public class ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemova
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    UserForOneToOneOwningSideTestsWithoutCascadeTypes user;
+    UserForOneToOneOwningSideTestsOwningSideFetchLazy user;
+
 }

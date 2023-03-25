@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.inverseside.orhan.removal;
+package com.example.hibernate.one.to.one.owningside.orphan.removal;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue {
+public class ProfileForOneToOneOwningSideOrphanRemovalFalse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +26,5 @@ public class ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue {
     @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name = "user_id")
-    UserForOneToOneInverseSideTestsOrphanRemovalTrue user;
+    UserForOneToOneOwningSideOrphanRemovalFalse user;
 }

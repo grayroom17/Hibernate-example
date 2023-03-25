@@ -1,16 +1,18 @@
 package com.example.hibernate.one.to.one.inverseside;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.one.to.one.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods;
-import com.example.hibernate.one.to.one.inverseside.cascade.types.ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes;
-import com.example.hibernate.one.to.one.inverseside.cascade.types.UserForOneToOneInverseSideTestsWithoutCascadeTypes;
-import com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.UserForOneToOneInverseSideTestsInverseSideFetchLazy;
-import com.example.hibernate.one.to.one.inverseside.orhan.removal.ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue;
-import com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideTestsOrphanRemovalTrue;
+import com.example.hibernate.one.to.one.stack.owerflow.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods;
+import com.example.hibernate.one.to.one.inverseside.cascade.types.ProfileForOneToOneInverseSideWithoutCascadeTypes;
+import com.example.hibernate.one.to.one.inverseside.cascade.types.UserForOneToOneInverseSideWithoutCascadeTypes;
+import com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.UserForOneToOneInverseSideFetchLazy;
+import com.example.hibernate.one.to.one.inverseside.optional.UserForOneToOneInverseSideOptionalFalse;
+import com.example.hibernate.one.to.one.inverseside.orhan.removal.ProfileForOneToOneInverseSideWithOrphanRemovalTrue;
+import com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideOrphanRemovalTrue;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.proxy.HibernateProxy;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
@@ -41,6 +43,38 @@ class OneToOneInverseSideIT extends BaseIT {
         }
     }
 
+    @Test
+    void whenOptionalTrue_thenHibernateDoOuterLeftJoinToOwningSide() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            session.find(UserForOneToOneInverseSideTests.class, 1L);
+            var query = outContent.toString()
+                    .replaceAll("[\\t\\n\\r]+", " ")
+                    .replaceAll(" +", " ")
+                    .trim();
+            log.warn(outContent.toString());
+            Assertions.assertTrue(query.contains("left join profile")
+                                  || query.contains("left outer join profile"));
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void whenOptionalFalse_thenHibernateDoInnerJoinToToOwningSide() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            session.find(UserForOneToOneInverseSideOptionalFalse.class, 1L);
+            var query = outContent.toString()
+                    .replaceAll("[\\t\\n\\r]+", " ")
+                    .replaceAll(" +", " ")
+                    .trim();
+            log.warn(outContent.toString());
+            Assertions.assertTrue(query.contains("join profile") || query.contains("inner join profile"));
+            Assertions.assertFalse(query.contains("left join profile"));
+            Assertions.assertFalse(query.contains("left outer join profile"));
+            System.setOut(originalOut);
+        }
+    }
 
     @Test
     void whenInverseSideFetchLazy_thenHibernateDoSelectToOwningSideAndDoNotInitializeOwningSideLazy() {
@@ -48,7 +82,7 @@ class OneToOneInverseSideIT extends BaseIT {
             System.setOut(new PrintStream(outContent));
             @SuppressWarnings("unused")
             var user =
-                    session.find(UserForOneToOneInverseSideTestsInverseSideFetchLazy.class, 7L);
+                    session.find(UserForOneToOneInverseSideFetchLazy.class, 7L);
             log.warn(outContent.toString());
             assertFalse(outContent.toString().contains("from users"));
             assertFalse(outContent.toString().contains("from profile"));
@@ -100,10 +134,10 @@ class OneToOneInverseSideIT extends BaseIT {
     void persistInverseSideEntity_whenInverseSideWithoutCascadeTypes_thenHibernateSaveOnlyInverseSideEntity() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var user = UserForOneToOneInverseSideTestsWithoutCascadeTypes.builder()
+            var user = UserForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .username("newUser 2")
                     .build();
-            var profile = ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes.builder()
+            var profile = ProfileForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .language("UA")
                     .programmingLanguage("C")
                     .build();
@@ -113,7 +147,7 @@ class OneToOneInverseSideIT extends BaseIT {
             session.getTransaction().commit();
             session.clear();
 
-            var foundedUser = session.find(UserForOneToOneInverseSideTestsWithoutCascadeTypes.class, user.getId());
+            var foundedUser = session.find(UserForOneToOneInverseSideWithoutCascadeTypes.class, user.getId());
             assertNotNull(foundedUser);
             assertNull(foundedUser.getProfile());
         }
@@ -146,10 +180,10 @@ class OneToOneInverseSideIT extends BaseIT {
     void mergeInverseSideEntity_whenInverseSideWithoutCascadeTypes_thenHibernateSavaOrUpdateOnlyInverseSideEntity() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var user = UserForOneToOneInverseSideTestsWithoutCascadeTypes.builder()
+            var user = UserForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .username("newUser 4")
                     .build();
-            var profile = ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes.builder()
+            var profile = ProfileForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .language("UZ")
                     .programmingLanguage("JavaScript")
                     .build();
@@ -159,7 +193,7 @@ class OneToOneInverseSideIT extends BaseIT {
             session.getTransaction().commit();
             session.clear();
 
-            var foundedUser = session.find(UserForOneToOneInverseSideTestsWithoutCascadeTypes.class, user.getId());
+            var foundedUser = session.find(UserForOneToOneInverseSideWithoutCascadeTypes.class, user.getId());
             assertNotNull(foundedUser);
             assertNull(foundedUser.getProfile());
         }
@@ -199,10 +233,10 @@ class OneToOneInverseSideIT extends BaseIT {
     void removeInverseSideEntity_whenInverseSideWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var user = UserForOneToOneInverseSideTestsWithoutCascadeTypes.builder()
+            var user = UserForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .username("newUser 6")
                     .build();
-            var profile = ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes.builder()
+            var profile = ProfileForOneToOneInverseSideWithoutCascadeTypes.builder()
                     .language("IT")
                     .programmingLanguage("Scala")
                     .build();
@@ -253,7 +287,7 @@ class OneToOneInverseSideIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            var user = session.find(UserForOneToOneInverseSideTestsWithoutCascadeTypes.class, 7L);
+            var user = session.find(UserForOneToOneInverseSideWithoutCascadeTypes.class, 7L);
             var profile = user.getProfile();
 
             var newUsername = "new Username 2";
@@ -299,7 +333,7 @@ class OneToOneInverseSideIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var user = session.find(UserForOneToOneInverseSideTestsWithoutCascadeTypes.class, 7L);
+            var user = session.find(UserForOneToOneInverseSideWithoutCascadeTypes.class, 7L);
             var profile = user.getProfile();
 
             assertTrue(session.contains(profile));
@@ -319,10 +353,10 @@ class OneToOneInverseSideIT extends BaseIT {
             session.beginTransaction();
 
             var userId = 9L;
-            var user = session.find(UserForOneToOneInverseSideTestsOrphanRemovalTrue.class, userId);
+            var user = session.find(UserForOneToOneInverseSideOrphanRemovalTrue.class, userId);
             var profile = user.getProfile();
             assertNotNull(profile);
-            var otherProfile = ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue.builder()
+            var otherProfile = ProfileForOneToOneInverseSideWithOrphanRemovalTrue.builder()
                     .language("CH")
                     .programmingLanguage("Ruby")
                     .build();
@@ -332,7 +366,7 @@ class OneToOneInverseSideIT extends BaseIT {
             session.getTransaction().commit();
             session.clear();
 
-            assertNull(session.find(ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue.class,profile.getId()));
+            assertNull(session.find(ProfileForOneToOneInverseSideWithOrphanRemovalTrue.class, profile.getId()));
         }
     }
 

@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneInverseSideTestsWithFetchLazy {
+public class ProfileForOneToOneInverseSideWithFetchLazy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +26,6 @@ public class ProfileForOneToOneInverseSideTestsWithFetchLazy {
     @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    UserForOneToOneInverseSideTestsInverseSideFetchLazy user;
+    UserForOneToOneInverseSideFetchLazy user;
 
 }

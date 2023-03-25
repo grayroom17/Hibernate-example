@@ -42,23 +42,30 @@
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithFetchEager"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
 
+        <mapping class="com.example.hibernate.one.to.one.stack.owerflow.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.one.stack.owerflow.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+
         <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTests"/>
         <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTests"/>
-        <mapping class="com.example.hibernate.one.to.one.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
-        <mapping class="com.example.hibernate.one.to.one.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
-        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTestsWithFetchLazy"/>
-        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTestsOwningSideFetchLazy"/>
-        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
-        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.fetch.type.lazy.ProfileForOneToOneOwningSideTestsWithFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.fetch.type.lazy.UserForOneToOneOwningSideTestsOwningSideFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.cascade.type.ProfileForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.cascade.type.UserForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.orphan.removal.ProfileForOneToOneOwningSideOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.orphan.removal.UserForOneToOneOwningSideOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.optional.ProfileForOneToOneOwningSideWithOptionalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.optional.UserForOneToOneOwningSideOptionalFalse"/>
 
         <mapping class="com.example.hibernate.one.to.one.inverseside.ProfileForOneToOneInverseSideTests"/>
         <mapping class="com.example.hibernate.one.to.one.inverseside.UserForOneToOneInverseSideTests"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.ProfileForOneToOneInverseSideTestsWithFetchLazy"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.UserForOneToOneInverseSideTestsInverseSideFetchLazy"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.UserForOneToOneInverseSideTestsWithoutCascadeTypes"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue"/>
-        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideTestsOrphanRemovalTrue"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.ProfileForOneToOneInverseSideWithFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.UserForOneToOneInverseSideFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.ProfileForOneToOneInverseSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.UserForOneToOneInverseSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.ProfileForOneToOneInverseSideWithOrphanRemovalTrue"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideOrphanRemovalTrue"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.optional.ProfileForOneToOneInverseSideWithOptionalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.optional.UserForOneToOneInverseSideOptionalFalse"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

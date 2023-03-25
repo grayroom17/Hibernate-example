@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.inverseside.orhan.removal;
+package com.example.hibernate.one.to.one.inverseside.fetch.type.lazy;
 
 import com.example.hibernate.entity.Company;
 import com.example.hibernate.entity.PersonalInfo;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneInverseSideTestsOrphanRemovalTrue {
+public class UserForOneToOneInverseSideFetchLazy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -37,10 +37,10 @@ public class UserForOneToOneInverseSideTestsOrphanRemovalTrue {
     @JoinColumn(name = "company_id")
     Company company;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true)
-    ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue profile;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    ProfileForOneToOneInverseSideWithFetchLazy profile;
 
-    public void setProfile(ProfileForOneToOneInverseSideTestsInverseSideOrphanRemovalTrue profile) {
+    public void setProfile(ProfileForOneToOneInverseSideWithFetchLazy profile) {
         this.profile = profile;
         profile.setUser(this);
     }

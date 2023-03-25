@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.inverseside.cascade.types;
+package com.example.hibernate.one.to.one.inverseside.orhan.removal;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes {
+public class ProfileForOneToOneInverseSideWithOrphanRemovalTrue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +26,5 @@ public class ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes {
     @EqualsAndHashCode.Exclude
     @OneToOne
     @JoinColumn(name = "user_id")
-    UserForOneToOneInverseSideTestsWithoutCascadeTypes user;
+    UserForOneToOneInverseSideOrphanRemovalTrue user;
 }

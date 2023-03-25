@@ -1,10 +1,17 @@
 package com.example.hibernate.one.to.one.owningside;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.one.to.one.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods;
+import com.example.hibernate.one.to.one.stack.owerflow.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods;
+import com.example.hibernate.one.to.one.owningside.cascade.type.ProfileForOneToOneOwningSideTestsWithoutCascadeTypes;
+import com.example.hibernate.one.to.one.owningside.cascade.type.UserForOneToOneOwningSideTestsWithoutCascadeTypes;
+import com.example.hibernate.one.to.one.owningside.fetch.type.lazy.ProfileForOneToOneOwningSideTestsWithFetchLazy;
+import com.example.hibernate.one.to.one.owningside.optional.ProfileForOneToOneOwningSideWithOptionalFalse;
+import com.example.hibernate.one.to.one.owningside.orphan.removal.ProfileForOneToOneOwningSideOrphanRemovalFalse;
+import com.example.hibernate.one.to.one.owningside.orphan.removal.UserForOneToOneOwningSideOrphanRemovalFalse;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
@@ -34,6 +41,38 @@ class OneToOneOwningSideIT extends BaseIT {
         }
     }
 
+    @Test
+    void whenOptionalTrue_thenHibernateDoOuterLeftJoinToInverseSide() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            session.find(ProfileForOneToOneOwningSideTests.class, 1L);
+            var query = outContent.toString()
+                    .replaceAll("[\\t\\n\\r]+", " ")
+                    .replaceAll(" +", " ")
+                    .trim();
+            log.warn(outContent.toString());
+            Assertions.assertTrue(query.contains("left join users")
+                                  || query.contains("left outer join users"));
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void whenOptionalFalse_thenHibernateDoInnerJoinToInverseSide() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            session.find(ProfileForOneToOneOwningSideWithOptionalFalse.class, 1L);
+            var query = outContent.toString()
+                    .replaceAll("[\\t\\n\\r]+", " ")
+                    .replaceAll(" +", " ")
+                    .trim();
+            log.warn(outContent.toString());
+            Assertions.assertTrue(query.contains("join users") || query.contains("inner join users"));
+            Assertions.assertFalse(query.contains("left join users"));
+            Assertions.assertFalse(query.contains("left outer join users"));
+            System.setOut(originalOut);
+        }
+    }
 
     @Test
     void whenOwningSideFetchLazy_thenHibernateDoNotAnyJoinToTableRelatedToInverseSide() {
@@ -91,7 +130,7 @@ class OneToOneOwningSideIT extends BaseIT {
     void persistOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
                     .language("UA")
                     .programmingLanguage("C")
                     .build();
@@ -134,7 +173,7 @@ class OneToOneOwningSideIT extends BaseIT {
     void mergeOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateThrowsConstraintViolationException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
                     .language("UZ")
                     .programmingLanguage("JavaScript")
                     .build();
@@ -184,7 +223,7 @@ class OneToOneOwningSideIT extends BaseIT {
     void removeOwningSideEntity_whenOwningSideWithoutCascadeTypes_thenHibernateDeleteOnlyOwningSideEntity() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.builder()
+            var profile = ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.builder()
                     .language("IT")
                     .programmingLanguage("Scala")
                     .build();
@@ -201,7 +240,7 @@ class OneToOneOwningSideIT extends BaseIT {
             session.beginTransaction();
             session.remove(profile);
             session.getTransaction().commit();
-            assertNull(session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, profile.getId()));
+            assertNull(session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.class, profile.getId()));
             assertNotNull(session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, user.getId()));
         }
     }
@@ -238,7 +277,7 @@ class OneToOneOwningSideIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.class, 1L);
             var user = profile.getUser();
 
             var newProfileProgrammingLanguage = "Cobol";
@@ -284,7 +323,7 @@ class OneToOneOwningSideIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, 1L);
+            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypes.class, 1L);
             var user = profile.getUser();
 
             assertTrue(session.contains(profile));
@@ -325,18 +364,18 @@ class OneToOneOwningSideIT extends BaseIT {
             session.beginTransaction();
 
             var profileId = 1L;
-            var profile = session.find(ProfileForOneToOneOwningSideTestsWithoutCascadeTypesAndOrphanRemovalFalse.class, profileId);
+            var profile = session.find(ProfileForOneToOneOwningSideOrphanRemovalFalse.class, profileId);
             var user = profile.getUser();
             assertNotNull(user);
             var oldUserId = user.getId();
-            var otherUser = session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, 2L);
+            var otherUser = session.find(UserForOneToOneOwningSideOrphanRemovalFalse.class, 2L);
 
             profile.setUser(otherUser);
 
             session.getTransaction().commit();
             session.clear();
 
-            var foundedUser = session.find(UserForOneToOneOwningSideTestsWithoutCascadeTypes.class, oldUserId);
+            var foundedUser = session.find(UserForOneToOneOwningSideOrphanRemovalFalse.class, oldUserId);
             assertNotNull(foundedUser);
         }
     }

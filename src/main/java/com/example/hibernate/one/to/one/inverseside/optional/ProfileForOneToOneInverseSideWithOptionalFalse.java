@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.one.to.one.inverseside.optional;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "profile")
-public class ProfileForOneToOneOwningSideTestsWithFetchLazy {
+public class ProfileForOneToOneInverseSideWithOptionalFalse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +24,8 @@ public class ProfileForOneToOneOwningSideTestsWithFetchLazy {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "user_id")
-    UserForOneToOneOwningSideTestsOwningSideFetchLazy user;
+    UserForOneToOneInverseSideOptionalFalse user;
 
 }

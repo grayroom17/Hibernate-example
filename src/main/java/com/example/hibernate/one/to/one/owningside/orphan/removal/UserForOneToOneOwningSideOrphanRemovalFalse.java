@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.inverseside.cascade.types;
+package com.example.hibernate.one.to.one.owningside.orphan.removal;
 
 import com.example.hibernate.entity.Company;
 import com.example.hibernate.entity.PersonalInfo;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.Type;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneInverseSideTestsWithoutCascadeTypes {
+public class UserForOneToOneOwningSideOrphanRemovalFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -38,9 +38,9 @@ public class UserForOneToOneInverseSideTestsWithoutCascadeTypes {
     Company company;
 
     @OneToOne(mappedBy = "user")
-    ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes profile;
+    ProfileForOneToOneOwningSideOrphanRemovalFalse profile;
 
-    public void setProfile(ProfileForOneToOneInverseSideTestsInverseSideWithoutCascadeTypes profile) {
+    public void setProfile(ProfileForOneToOneOwningSideOrphanRemovalFalse profile) {
         this.profile = profile;
         profile.setUser(this);
     }
