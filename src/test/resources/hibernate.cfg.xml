@@ -26,6 +26,8 @@
         <mapping class="com.example.hibernate.primarykeytypes.UserWithCompositePrimaryKey"/>
         <mapping class="com.example.hibernate.primarykeytypes.ProfileWithPrimaryKeyAsForeignKey"/>
         <mapping class="com.example.hibernate.primarykeytypes.UserForPrimaryKeyAsForeignKeyCheck"/>
+        <mapping class="com.example.hibernate.primarykeytypes.many.to.many.TeamManyToManyWithCompositePrimaryKey"/>
+        <mapping class="com.example.hibernate.primarykeytypes.many.to.many.UserManyToManyWithCompositePrimaryKey"/>
 
         <mapping class="com.example.hibernate.many.to.one.CompanyForManyToOneTests"/>
         <mapping class="com.example.hibernate.many.to.one.UserForManyToOneTests"/>
@@ -66,6 +68,10 @@
         <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideOrphanRemovalTrue"/>
         <mapping class="com.example.hibernate.one.to.one.inverseside.optional.ProfileForOneToOneInverseSideWithOptionalFalse"/>
         <mapping class="com.example.hibernate.one.to.one.inverseside.optional.UserForOneToOneInverseSideOptionalFalse"/>
+
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.UserTeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.TeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.UserForOneToManyToOneTests"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
