@@ -57,7 +57,7 @@ class OneToManyToOneIT extends BaseIT {
     void persist_whenUseListAsCollection_thenHibernateDoNotAnyJoin() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var user = session.find(UserForOneToManyToOneTests.class, 2L);
+            var user = session.find(UserForOneToManyToOneTests.class, 3L);
             var team = session.find(TeamForOneToManyToOneTests.class, 1L);
 
             var userTeam = UserTeamForOneToManyToOneTests.builder()
