@@ -1,4 +1,4 @@
-package com.example.hibernate.many.to.many.one_to_many_to_one;
+package com.example.hibernate.many.to.many.one_to_many_to_one.with_list;
 
 import com.example.hibernate.entity.PersonalInfo;
 import com.example.hibernate.entity.Role;
@@ -8,8 +8,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Type;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -39,5 +39,5 @@ public class UserForOneToManyToOneTests {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "user")
-    Set<UserTeamForOneToManyToOneTests> userTeams = new HashSet<>();
+    List<UserTeamForOneToManyToOneTests> userTeams = new ArrayList<>();
 }

@@ -69,9 +69,12 @@
         <mapping class="com.example.hibernate.one.to.one.inverseside.optional.ProfileForOneToOneInverseSideWithOptionalFalse"/>
         <mapping class="com.example.hibernate.one.to.one.inverseside.optional.UserForOneToOneInverseSideOptionalFalse"/>
 
-        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.UserTeamForOneToManyToOneTests"/>
-        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.TeamForOneToManyToOneTests"/>
-        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.UserForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.UserForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.TeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.UserTeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserTeamForOneToManyToOneTestsWithSet"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.TeamForOneToManyToOneTestsWithSet"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserForOneToManyToOneTestsWithSet"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

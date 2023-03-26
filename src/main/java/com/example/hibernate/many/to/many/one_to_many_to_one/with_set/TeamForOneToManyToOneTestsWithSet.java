@@ -1,4 +1,4 @@
-package com.example.hibernate.many.to.many.one_to_many_to_one;
+package com.example.hibernate.many.to.many.one_to_many_to_one.with_set;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +14,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "team")
-public class TeamForOneToManyToOneTests {
+public class TeamForOneToManyToOneTestsWithSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +27,5 @@ public class TeamForOneToManyToOneTests {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "team")
-    Set<UserTeamForOneToManyToOneTests> userTeams = new HashSet<>();
+    Set<UserTeamForOneToManyToOneTestsWithSet> userTeams = new HashSet<>();
 }

@@ -14,7 +14,6 @@ create table if not exists users_team
     team_id    bigint references team (id),
     joined     timestamp    not null,
     created_by varchar(128) not null
-
 );
 
 insert into users_team (user_id, team_id, joined, created_by)

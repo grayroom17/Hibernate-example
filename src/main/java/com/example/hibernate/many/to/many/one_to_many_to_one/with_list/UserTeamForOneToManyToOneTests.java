@@ -1,4 +1,4 @@
-package com.example.hibernate.many.to.many.one_to_many_to_one;
+package com.example.hibernate.many.to.many.one_to_many_to_one.with_list;
 
 import jakarta.persistence.*;
 import lombok.*;
