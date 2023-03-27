@@ -76,6 +76,9 @@
         <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.TeamForOneToManyToOneTestsWithSet"/>
         <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserForOneToManyToOneTestsWithSet"/>
 
+        <mapping class="com.example.hibernate.collections_mapping.LocaleInfo"/>
+        <mapping class="com.example.hibernate.collections_mapping.CompanyWithCollectionTable"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
