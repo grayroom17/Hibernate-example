@@ -79,6 +79,12 @@
         <mapping class="com.example.hibernate.collections_mapping.LocaleInfo"/>
         <mapping class="com.example.hibernate.collections_mapping.CompanyWithCollectionTable"/>
 
+        <mapping class="com.example.hibernate.ordering.in_db.order_by.CompanyWithOrderBy"/>
+        <mapping class="com.example.hibernate.ordering.in_db.order_by.UserForOrderBy"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.CompanyWithSortedCollection"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.UserForSortedCollection"/>
+
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
