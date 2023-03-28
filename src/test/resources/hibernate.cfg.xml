@@ -17,10 +17,75 @@
         <property name="hibernate.hbm2ddl.auto">validate</property>
         <property name="hbm2ddl.auto">validate</property>
 
-        <mapping class="com.example.entity.User"/>
-        <mapping class="com.example.entity.UserWithSequence"/>
-        <mapping class="com.example.entity.UserWithTableGenerator"/>
-        <mapping class="com.example.entity.UserWithCompositePrimaryKey"/>
+        <mapping class="com.example.hibernate.entity.User"/>
+        <mapping class="com.example.hibernate.entity.Company"/>
+        <mapping class="com.example.hibernate.entity.Profile"/>
+
+        <mapping class="com.example.hibernate.primarykeytypes.UserWithSequence"/>
+        <mapping class="com.example.hibernate.primarykeytypes.UserWithTableGenerator"/>
+        <mapping class="com.example.hibernate.primarykeytypes.UserWithCompositePrimaryKey"/>
+        <mapping class="com.example.hibernate.primarykeytypes.ProfileWithPrimaryKeyAsForeignKey"/>
+        <mapping class="com.example.hibernate.primarykeytypes.UserForPrimaryKeyAsForeignKeyCheck"/>
+        <mapping class="com.example.hibernate.primarykeytypes.many.to.many.TeamManyToManyWithCompositePrimaryKey"/>
+        <mapping class="com.example.hibernate.primarykeytypes.many.to.many.UserManyToManyWithCompositePrimaryKey"/>
+
+        <mapping class="com.example.hibernate.many.to.one.CompanyForManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.one.UserForManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithOptionalFalse"/>
+        <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithFetchLazy"/>
+        <mapping class="com.example.hibernate.many.to.one.UserWithCascadeTypeAll"/>
+
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTests"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTests"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithFetchEager"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithFetchEager"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
+
+        <mapping class="com.example.hibernate.one.to.one.stack.owerflow.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
+        <mapping class="com.example.hibernate.one.to.one.stack.owerflow.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
+
+        <mapping class="com.example.hibernate.one.to.one.owningside.ProfileForOneToOneOwningSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.UserForOneToOneOwningSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.fetch.type.lazy.ProfileForOneToOneOwningSideTestsWithFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.fetch.type.lazy.UserForOneToOneOwningSideTestsOwningSideFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.cascade.type.ProfileForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.cascade.type.UserForOneToOneOwningSideTestsWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.orphan.removal.ProfileForOneToOneOwningSideOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.orphan.removal.UserForOneToOneOwningSideOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.optional.ProfileForOneToOneOwningSideWithOptionalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.owningside.optional.UserForOneToOneOwningSideOptionalFalse"/>
+
+        <mapping class="com.example.hibernate.one.to.one.inverseside.ProfileForOneToOneInverseSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.UserForOneToOneInverseSideTests"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.ProfileForOneToOneInverseSideWithFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.fetch.type.lazy.UserForOneToOneInverseSideFetchLazy"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.ProfileForOneToOneInverseSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.cascade.types.UserForOneToOneInverseSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.ProfileForOneToOneInverseSideWithOrphanRemovalTrue"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.orhan.removal.UserForOneToOneInverseSideOrphanRemovalTrue"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.optional.ProfileForOneToOneInverseSideWithOptionalFalse"/>
+        <mapping class="com.example.hibernate.one.to.one.inverseside.optional.UserForOneToOneInverseSideOptionalFalse"/>
+
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.UserForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.TeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_list.UserTeamForOneToManyToOneTests"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserTeamForOneToManyToOneTestsWithSet"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.TeamForOneToManyToOneTestsWithSet"/>
+        <mapping class="com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserForOneToManyToOneTestsWithSet"/>
+
+        <mapping class="com.example.hibernate.collections_mapping.LocaleInfo"/>
+        <mapping class="com.example.hibernate.collections_mapping.CompanyWithCollectionTable"/>
+
+        <mapping class="com.example.hibernate.ordering.in_db.order_by.CompanyWithOrderBy"/>
+        <mapping class="com.example.hibernate.ordering.in_db.order_by.UserForOrderBy"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.CompanyWithSortedCollection"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.UserForSortedCollection"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.map.CompanyWithMap"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.map.UserForMap"/>
+
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
