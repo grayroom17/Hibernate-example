@@ -5,6 +5,8 @@ import com.example.hibernate.ordering.in_db.order_by.CompanyWithOrderBy;
 import com.example.hibernate.ordering.in_db.order_by.UserForOrderBy;
 import com.example.hibernate.ordering.in_memory.CompanyWithSortedCollection;
 import com.example.hibernate.ordering.in_memory.UserForSortedCollection;
+import com.example.hibernate.ordering.in_memory.map.CompanyWithMap;
+import com.example.hibernate.ordering.in_memory.map.UserForMap;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -74,12 +76,12 @@ class OrderingIT extends BaseIT {
     }
 
     @Test
-    void inMemorySort() {
+    void inMemoryCollectionSort() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
             var company = CompanyWithSortedCollection.builder()
-                    .name("Just Company")
+                    .name("One else company")
                     .build();
 
             var user1 = UserForSortedCollection.builder()
@@ -121,6 +123,66 @@ class OrderingIT extends BaseIT {
             var foundedCompany = session.find(CompanyWithSortedCollection.class, company.getId());
             var orderedUsername = foundedCompany.getUsers().stream().map(UserForSortedCollection::getUsername).toList();
             var sortedUsernames = company.getUsers().stream().map(UserForSortedCollection::getUsername).toList();
+            assertEquals(sortedUsernames, orderedUsername);
+            log.info("Ordered: {}", orderedUsername);
+            log.info("Sorted: {}", sortedUsernames);
+        }
+    }
+
+    @Test
+    void inMemoryMapSort() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var company = CompanyWithMap.builder()
+                    .name("Just Company")
+                    .build();
+
+            var user1 = UserForMap.builder()
+                    .username("adfds")
+                    .company(company)
+                    .build();
+            var user2 = UserForMap.builder()
+                    .username("basg")
+                    .company(company)
+                    .build();
+            var user3 = UserForMap.builder()
+                    .username("dagdgas")
+                    .company(company)
+                    .build();
+            var user4 = UserForMap.builder()
+                    .username("gadads")
+                    .company(company)
+                    .build();
+            var user5 = UserForMap.builder()
+                    .username("adadfads")
+                    .company(company)
+                    .build();
+            var user6 = UserForMap.builder()
+                    .username("adfasdf")
+                    .company(company)
+                    .build();
+            var user7 = UserForMap.builder()
+                    .username("afvasdfv")
+                    .company(company)
+                    .build();
+
+
+            company.addUser(user1);
+            company.addUser(user2);
+            company.addUser(user3);
+            company.addUser(user4);
+            company.addUser(user5);
+            company.addUser(user6);
+            company.addUser(user7);
+
+            session.persist(company);
+            session.getTransaction().commit();
+            session.clear();
+
+            var foundedCompany = session.find(CompanyWithMap.class, company.getId());
+            var orderedUsername = foundedCompany.getUsers().values().stream().map(UserForMap::getUsername).toList();
+            var sortedUsernames = company.getUsers().values().stream().map(UserForMap::getUsername).toList();
             assertEquals(sortedUsernames, orderedUsername);
             log.info("Ordered: {}", orderedUsername);
             log.info("Sorted: {}", sortedUsernames);

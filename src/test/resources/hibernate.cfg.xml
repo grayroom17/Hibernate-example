@@ -83,6 +83,8 @@
         <mapping class="com.example.hibernate.ordering.in_db.order_by.UserForOrderBy"/>
         <mapping class="com.example.hibernate.ordering.in_memory.CompanyWithSortedCollection"/>
         <mapping class="com.example.hibernate.ordering.in_memory.UserForSortedCollection"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.map.CompanyWithMap"/>
+        <mapping class="com.example.hibernate.ordering.in_memory.map.UserForMap"/>
 
 
         <!-- DB schema will be updated if needed -->
