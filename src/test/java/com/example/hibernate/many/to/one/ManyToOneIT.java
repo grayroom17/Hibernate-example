@@ -1,8 +1,6 @@
 package com.example.hibernate.many.to.one;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.entity.Company;
-import com.example.hibernate.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TransientObjectException;
 import org.junit.jupiter.api.Assertions;
@@ -174,10 +172,10 @@ class ManyToOneIT extends BaseIT {
     void persistManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateThrowsTransientObjectException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
+            var company = CompanyForManyToOneOwningSideWithoutCascadeTypes.builder()
                     .name("Default Company 6")
                     .build();
-            var user = User.builder()
+            var user = UserManyToOneWithoutCascadeTypes.builder()
                     .username("newUser 6")
                     .company(company)
                     .build();
@@ -216,11 +214,11 @@ class ManyToOneIT extends BaseIT {
     void mergeManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateThrowsTransientObjectException() {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            var company = Company.builder()
+            var company = CompanyForManyToOneOwningSideWithoutCascadeTypes.builder()
                     .name("Default CompanyForOneToManyTests 7")
                     .build();
             var defaultUserKey = 1L;
-            var user = session.find(User.class, defaultUserKey);
+            var user = session.find(UserManyToOneWithoutCascadeTypes.class, defaultUserKey);
             user.setCompany(company);
 
             session.merge(user);
@@ -261,10 +259,10 @@ class ManyToOneIT extends BaseIT {
     void removeManyEntity_whenManyToOneWithoutCascadeTypes_thenHibernateDeleteOnlyManyEntity() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var company = Company.builder()
+            var company = CompanyForManyToOneOwningSideWithoutCascadeTypes.builder()
                     .name("Default CompanyForOneToManyTests 8")
                     .build();
-            var user = User.builder()
+            var user = UserManyToOneWithoutCascadeTypes.builder()
                     .username("newUser 8")
                     .company(company)
                     .build();
@@ -277,7 +275,7 @@ class ManyToOneIT extends BaseIT {
             var transaction = session.beginTransaction();
             session.remove(user);
             Assertions.assertDoesNotThrow(transaction::commit);
-            var foundedCompany = session.find(Company.class, company.getId());
+            var foundedCompany = session.find(CompanyForManyToOneOwningSideWithoutCascadeTypes.class, company.getId());
             Assertions.assertNotNull(foundedCompany);
             Assertions.assertEquals(company, foundedCompany);
         }
@@ -314,7 +312,7 @@ class ManyToOneIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var userWithCompany = session.find(User.class, 4L);
+            var userWithCompany = session.find(UserManyToOneWithoutCascadeTypes.class, 4L);
             var company = userWithCompany.getCompany();
 
             var newUsername = "new Username";
@@ -360,7 +358,7 @@ class ManyToOneIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
 
-            var userWithCompany = session.find(User.class, 4L);
+            var userWithCompany = session.find(UserManyToOneWithoutCascadeTypes.class, 4L);
             var company = userWithCompany.getCompany();
 
             Assertions.assertTrue(session.contains(userWithCompany));

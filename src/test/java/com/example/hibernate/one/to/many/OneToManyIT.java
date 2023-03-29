@@ -1,8 +1,6 @@
 package com.example.hibernate.one.to.many;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.entity.Company;
-import com.example.hibernate.entity.User;
 import com.example.hibernate.many.to.one.UserWithManyToOneWithFetchLazy;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
@@ -148,10 +146,10 @@ class OneToManyIT extends BaseIT {
     void persistInverseSide_whenInverseSideWithoutCascadeTypes_thenHibernateSaveOnlyInverseSide() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
-            var company = Company.builder()
+            var company = CompanyForOneToManyWithoutCascadeTypes.builder()
                     .name("Default Company 5")
                     .build();
-            var user = User.builder()
+            var user = UserForOneToManyInverseSideWithoutCascadeTypes.builder()
                     .username("newUser 5")
                     .company(company)
                     .build();
@@ -161,8 +159,8 @@ class OneToManyIT extends BaseIT {
             session.getTransaction().commit();
             session.clear();
 
-            var foundedCompany = session.find(Company.class, company.getId());
-            assertEquals(company,foundedCompany);
+            var foundedCompany = session.find(CompanyForOneToManyWithoutCascadeTypes.class, company.getId());
+            assertEquals(company, foundedCompany);
             assertFalse(company.getUsers().isEmpty());
             assertTrue(foundedCompany.getUsers().isEmpty());
         }

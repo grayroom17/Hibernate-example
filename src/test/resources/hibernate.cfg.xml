@@ -34,6 +34,8 @@
         <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithOptionalFalse"/>
         <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithFetchLazy"/>
         <mapping class="com.example.hibernate.many.to.one.UserWithCascadeTypeAll"/>
+        <mapping class="com.example.hibernate.many.to.one.CompanyForManyToOneOwningSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.many.to.one.UserManyToOneWithoutCascadeTypes"/>
 
         <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
@@ -43,6 +45,8 @@
         <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithFetchEager"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyInverseSideWithoutCascadeTypes"/>
 
         <mapping class="com.example.hibernate.one.to.one.stack.owerflow.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
         <mapping class="com.example.hibernate.one.to.one.stack.owerflow.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
