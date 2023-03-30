@@ -1,4 +1,4 @@
-package com.example.hibernate.many.to.many.one_to_many_to_one.with_list;
+package com.example.hibernate.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,23 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
-public class UserForOneToManyToOneTests {
+@Table(name = "team")
+public class Team {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(unique = true)
-    String username;
+    @Column(nullable = false, unique = true)
+    String name;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @OneToMany(mappedBy = "user")
-    List<UserTeamForOneToManyToOneTests> userTeams = new ArrayList<>();
+    @OneToMany(mappedBy = "team")
+    List<UserTeam> userTeams = new ArrayList<>();
 }

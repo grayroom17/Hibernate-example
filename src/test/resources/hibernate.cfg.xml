@@ -20,6 +20,8 @@
         <mapping class="com.example.hibernate.entity.User"/>
         <mapping class="com.example.hibernate.entity.Company"/>
         <mapping class="com.example.hibernate.entity.Profile"/>
+        <mapping class="com.example.hibernate.entity.Team"/>
+        <mapping class="com.example.hibernate.entity.UserTeam"/>
 
         <mapping class="com.example.hibernate.primarykeytypes.UserWithSequence"/>
         <mapping class="com.example.hibernate.primarykeytypes.UserWithTableGenerator"/>

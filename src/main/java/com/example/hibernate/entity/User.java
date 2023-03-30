@@ -6,6 +6,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Type;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,4 +41,10 @@ public class User {
     @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     Profile profile;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    List<UserTeam> userTeams = new ArrayList<>();
 }
