@@ -92,6 +92,10 @@
         <mapping class="com.example.hibernate.ordering.in_memory.map.CompanyWithMap"/>
         <mapping class="com.example.hibernate.ordering.in_memory.map.UserForMap"/>
 
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.UserTablePerClass"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ProgrammerTablePerClass"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ManagerTablePerClass"/>
+
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
