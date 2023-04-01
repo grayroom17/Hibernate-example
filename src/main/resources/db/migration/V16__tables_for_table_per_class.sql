@@ -25,6 +25,6 @@ values ((select nextval from nextval('table_per_class')),
 
 insert into manager_table_per_class (id, username, project_name)
 values ((select nextval from nextval('table_per_class')),
-        'defaultProgrammer',
+        'defaultManager',
         'defaultProject');
 

@@ -96,6 +96,10 @@
         <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ProgrammerTablePerClass"/>
         <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ManagerTablePerClass"/>
 
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.UserSingleTable"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.ProgrammerSingleTable"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.ManagerSingleTable"/>
+
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

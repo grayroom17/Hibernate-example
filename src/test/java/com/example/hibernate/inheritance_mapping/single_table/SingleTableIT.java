@@ -1,4 +1,4 @@
-package com.example.hibernate.inheritance_mapping.table_per_class;
+package com.example.hibernate.inheritance_mapping.single_table;
 
 import com.example.hibernate.BaseIT;
 import lombok.extern.slf4j.Slf4j;
@@ -11,14 +11,14 @@ import static com.example.hibernate.entity.ProgrammingLanguage.JAVA;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-class TablePerClassIT extends BaseIT {
+class SingleTableIT extends BaseIT {
 
     @Test
-    void whenPersistChild_thenHibernateGetNextValueFromSequenceAndThenDoInsertToTableMappedByChild() {
+    void whenPersistChild_thenHibernateDoInsertToTableMappedByParentAndSetChildDiscriminator() {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            var programmer = ProgrammerTablePerClass.builder()
+            var programmer = ProgrammerSingleTable.builder()
                     .username("programmer")
                     .programmingLanguage(JAVA)
                     .build();
@@ -27,10 +27,11 @@ class TablePerClassIT extends BaseIT {
             session.persist(programmer);
             var query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("select nextval('table_per_class')"));
+            assertTrue(query.contains("insert into users_single_table")
+                       && query.contains("'PROGRAMMER'"));
             outContent.reset();
 
-            var manager = ManagerTablePerClass.builder()
+            var manager = ManagerSingleTable.builder()
                     .username("manager")
                     .projectName("project")
                     .build();
@@ -38,63 +39,59 @@ class TablePerClassIT extends BaseIT {
             session.persist(manager);
             query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("select nextval('table_per_class')"));
+            assertTrue(query.contains("insert into users_single_table")
+                       && query.contains("'MANAGER'"));
             outContent.reset();
 
             session.getTransaction().commit();
-            query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("insert into programmer_table_per_class")
-                       && query.contains("insert into manager_table_per_class"));
             outContent.reset();
             System.setOut(originalOut);
         }
     }
 
     @Test
-    void whenFindChild_thenHibernateDoSelectToTableMappedByChild() {
+    void whenFindChild_thenHibernateDoSelectToTableMappedByParentWithDiscriminatorWhereClause() {
         try (var session = sessionFactory.openSession()) {
 
             System.setOut(new PrintStream(outContent));
-            session.find(ProgrammerTablePerClass.class, 1L);
+            session.find(ProgrammerSingleTable.class, 1L);
             var query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("from programmer_table_per_class"));
+            assertTrue(query.contains("from users_single_table")
+                       && query.contains("user_type='PROGRAMMER'"));
             outContent.reset();
 
-            session.find(ManagerTablePerClass.class, 2L);
+            session.find(ManagerSingleTable.class, 2L);
             query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("from manager_table_per_class"));
+            assertTrue(query.contains("from users_single_table")
+                       && query.contains("user_type='MANAGER'"));
             outContent.reset();
             System.setOut(originalOut);
         }
     }
 
     @Test
-    void whenFindParent_thenHibernateDoUnionSelectToAllTableMappedByChildren() {
+    void whenFindParent_thenHibernateDoSelectToTableMappedByParentWithoutDiscriminatorWhereClause() {
         try (var session = sessionFactory.openSession()) {
 
             System.setOut(new PrintStream(outContent));
-            var programmer = session.find(UserTablePerClass.class, 1L);
+            var programmer = session.find(UserSingleTable.class, 1L);
             var query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("from programmer_table_per_class")
-                       && query.contains("union all")
-                       && query.contains("from manager_table_per_class"));
+            assertTrue(query.contains("from users_single_table"));
             outContent.reset();
 
-            var manager = session.find(UserTablePerClass.class, 2L);
+            var manager = session.find(UserSingleTable.class, 2L);
             query = getQuery();
             log.warn(outContent.toString());
-            assertTrue(query.contains("from programmer_table_per_class")
-                       && query.contains("union all")
-                       && query.contains("from manager_table_per_class"));
+            assertTrue(query.contains("from users_single_table"));
             outContent.reset();
             System.setOut(originalOut);
 
-            assertTrue(programmer instanceof ProgrammerTablePerClass);
-            assertTrue(manager instanceof ManagerTablePerClass);
+            assertTrue(programmer instanceof ProgrammerSingleTable);
+            assertTrue(manager instanceof ManagerSingleTable);
         }
     }
 
