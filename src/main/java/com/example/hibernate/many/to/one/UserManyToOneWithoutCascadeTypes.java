@@ -1,4 +1,4 @@
-package com.example.hibernate.one.to.one.owningside;
+package com.example.hibernate.many.to.one;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-public class UserForOneToOneOwningSideTests {
+public class UserManyToOneWithoutCascadeTypes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -19,11 +19,7 @@ public class UserForOneToOneOwningSideTests {
     @Column(unique = true)
     String username;
 
-    @OneToOne(mappedBy = "user")
-    ProfileForOneToOneOwningSideTests profile;
-
-    public void setProfile(ProfileForOneToOneOwningSideTests profile) {
-        this.profile = profile;
-        profile.setUser(this);
-    }
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    CompanyForManyToOneOwningSideWithoutCascadeTypes company;
 }

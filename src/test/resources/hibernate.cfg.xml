@@ -20,6 +20,8 @@
         <mapping class="com.example.hibernate.entity.User"/>
         <mapping class="com.example.hibernate.entity.Company"/>
         <mapping class="com.example.hibernate.entity.Profile"/>
+        <mapping class="com.example.hibernate.entity.Team"/>
+        <mapping class="com.example.hibernate.entity.UserTeam"/>
 
         <mapping class="com.example.hibernate.primarykeytypes.UserWithSequence"/>
         <mapping class="com.example.hibernate.primarykeytypes.UserWithTableGenerator"/>
@@ -34,6 +36,8 @@
         <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithOptionalFalse"/>
         <mapping class="com.example.hibernate.many.to.one.UserWithManyToOneWithFetchLazy"/>
         <mapping class="com.example.hibernate.many.to.one.UserWithCascadeTypeAll"/>
+        <mapping class="com.example.hibernate.many.to.one.CompanyForManyToOneOwningSideWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.many.to.one.UserManyToOneWithoutCascadeTypes"/>
 
         <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithNoExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
@@ -43,6 +47,8 @@
         <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithFetchEager"/>
         <mapping class="com.example.hibernate.one.to.many.UserForOneToManyTestsWithoutCascadeTypesAndOrphanRemovalFalse"/>
+        <mapping class="com.example.hibernate.one.to.many.CompanyForOneToManyWithoutCascadeTypes"/>
+        <mapping class="com.example.hibernate.one.to.many.UserForOneToManyInverseSideWithoutCascadeTypes"/>
 
         <mapping class="com.example.hibernate.one.to.one.stack.owerflow.ProfileForOneToOneWithNotExcludedInverseSideFromToStringAndEqualsAndHashCodeMethods"/>
         <mapping class="com.example.hibernate.one.to.one.stack.owerflow.UserForOneToOneNotExcludedManyFieldFromToStringAndEqualsAndHashCodeMethods"/>
@@ -85,6 +91,18 @@
         <mapping class="com.example.hibernate.ordering.in_memory.UserForSortedCollection"/>
         <mapping class="com.example.hibernate.ordering.in_memory.map.CompanyWithMap"/>
         <mapping class="com.example.hibernate.ordering.in_memory.map.UserForMap"/>
+
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.UserTablePerClass"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ProgrammerTablePerClass"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.table_per_class.ManagerTablePerClass"/>
+
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.UserSingleTable"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.ProgrammerSingleTable"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.single_table.ManagerSingleTable"/>
+
+        <mapping class="com.example.hibernate.inheritance_mapping.join.UserJoin"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.join.ProgrammerJoin"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.join.ManagerJoin"/>
 
 
         <!-- DB schema will be updated if needed -->

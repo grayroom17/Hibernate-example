@@ -102,7 +102,7 @@ class OneToOneInverseSideIT extends BaseIT {
                     .replaceAll(" +", " ")
                     .trim();
             log.warn(outContent.toString());
-            assertTrue(query.contains("left join company"));
+            assertTrue(query.contains("left join profile"));
             System.setOut(originalOut);
         }
     }

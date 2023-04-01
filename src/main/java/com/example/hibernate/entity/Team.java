@@ -3,6 +3,7 @@ package com.example.hibernate.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -12,24 +13,20 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Company extends BaseEntity<Long> {
+@Table(name = "team")
+public class Team extends BaseEntity<Long> {
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     String name;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    @OneToMany(mappedBy = "company")
-    List<User> users = new ArrayList<>();
-
-    public void addUser(User user) {
-        users.add(user);
-        user.setCompany(this);
-    }
+    @OneToMany(mappedBy = "team")
+    List<UserTeam> userTeams = new ArrayList<>();
 }

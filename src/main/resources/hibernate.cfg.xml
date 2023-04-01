@@ -17,6 +17,9 @@
 
         <mapping class="com.example.hibernate.entity.User"/>
         <mapping class="com.example.hibernate.entity.Company"/>
+        <mapping class="com.example.hibernate.entity.Profile"/>
+        <mapping class="com.example.hibernate.entity.Team"/>
+        <mapping class="com.example.hibernate.entity.UserTeam"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
