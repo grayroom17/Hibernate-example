@@ -100,6 +100,10 @@
         <mapping class="com.example.hibernate.inheritance_mapping.single_table.ProgrammerSingleTable"/>
         <mapping class="com.example.hibernate.inheritance_mapping.single_table.ManagerSingleTable"/>
 
+        <mapping class="com.example.hibernate.inheritance_mapping.join.UserJoin"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.join.ProgrammerJoin"/>
+        <mapping class="com.example.hibernate.inheritance_mapping.join.ManagerJoin"/>
+
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
