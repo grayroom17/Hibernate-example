@@ -46,4 +46,10 @@ public class User extends BaseEntity<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "user")
     List<UserTeam> userTeams = new ArrayList<>();
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    @OneToMany(mappedBy = "receiver")
+    List<Payment> payments = new ArrayList<>();
 }
