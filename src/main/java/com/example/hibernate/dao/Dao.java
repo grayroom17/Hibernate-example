@@ -9,9 +9,9 @@ import org.hibernate.Session;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserDao {
+public class Dao {
 
-    private static final UserDao INSTANCE = new UserDao();
+    private static final Dao INSTANCE = new Dao();
 
     public List<User> findAll(Session session) {
         return session.createQuery("select u from User u", User.class).list();
@@ -83,7 +83,7 @@ public class UserDao {
                 .list();
     }
 
-    public static UserDao getInstance() {
+    public static Dao getInstance() {
         return INSTANCE;
     }
 }
