@@ -67,11 +67,6 @@ public class Dao {
                 .list();
     }
 
-    /**
-     * Возвращает список: сотрудник (объект User), средний размер выплат, но только для тех сотрудников, чей средний размер выплат
-     * больше среднего размера выплат всех сотрудников
-     * Упорядочить по имени сотрудника
-     */
     public List<Object[]> isItPossible(Session session) {
         return session.createQuery("select u, avg (p.amount)" +
                                    "from User u " +

@@ -17,24 +17,24 @@ public class CriteriaDao {
     public List<User> findAll(Session session) {
         var builder = session.getCriteriaBuilder();
         var criteria = builder.createQuery(User.class);
-        var root = criteria.from(User.class);
-        criteria.select(root);
+        var user = criteria.from(User.class);
+        criteria.select(user);
         return session.createQuery(criteria).list();
     }
 
     public List<User> findAllByFirstName(Session session, String firstName) {
         var builder = session.getCriteriaBuilder();
         var criteria = builder.createQuery(User.class);
-        var root = criteria.from(User.class);
-        criteria.select(root).where(builder.equal(root.get(User_.personalInfo).get(PersonalInfo_.FIRSTNAME), firstName));
+        var user = criteria.from(User.class);
+        criteria.select(user).where(builder.equal(user.get(User_.personalInfo).get(PersonalInfo_.FIRSTNAME), firstName));
         return session.createQuery(criteria).list();
     }
 
     public List<User> findLimitedUsersOrderedByFirstname(Session session, int limit) {
         var builder = session.getCriteriaBuilder();
         var criteria = builder.createQuery(User.class);
-        var root = criteria.from(User.class);
-        criteria.select(root).orderBy(builder.asc(root.get(User_.personalInfo).get(PersonalInfo_.FIRSTNAME)));
+        var user = criteria.from(User.class);
+        criteria.select(user).orderBy(builder.asc(user.get(User_.personalInfo).get(PersonalInfo_.FIRSTNAME)));
         return session.createQuery(criteria).setMaxResults(limit).list();
     }
 
