@@ -1,6 +1,7 @@
 package com.example.hibernate.dao;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.dto.PaymentFilter;
 import com.example.hibernate.entity.User;
 import org.junit.jupiter.api.Test;
 
@@ -66,6 +67,20 @@ class QueryDslDaoIT extends BaseIT {
             var firstName = "Steve";
             var lastName = "Jobs";
             var payments = dao.findAveragePaymentAmountByFirstAndLastNames(session, firstName, lastName);
+            assertEquals(450d, payments);
+        }
+    }
+
+    @Test
+    void whenFindPaymentsAmountByFilter_thenReturnAverageAmountOfPaymentsOfSpecifiedUser() {
+        try (var session = sessionFactory.openSession()) {
+            var firstName = "Steve";
+            var lastName = "Jobs";
+            var filter = PaymentFilter.builder()
+                    .firstName(firstName)
+                    .lastName(lastName)
+                    .build();
+            var payments = dao.findPaymentsAmountByFilter(session, filter);
             assertEquals(450d, payments);
         }
     }

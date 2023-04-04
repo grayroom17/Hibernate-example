@@ -1,5 +1,7 @@
 package com.example.hibernate.dao;
 
+import com.example.hibernate.dto.PaymentFilter;
+import com.example.hibernate.dto.QPredicate;
 import com.example.hibernate.entity.Payment;
 import com.example.hibernate.entity.User;
 import com.querydsl.core.Tuple;
@@ -71,6 +73,30 @@ public class QueryDslDao {
                 .where(
                         user.personalInfo.firstname.eq(firstName)
                                 .and(user.personalInfo.lastname.eq(lastName)))
+                .fetchOne();
+    }
+
+    public Double findPaymentsAmountByFilter(Session session, PaymentFilter filter) {
+
+       /* List<Predicate> predicates = new ArrayList<>();
+        if (filter.getFirstName()!= null){
+            predicates.add(user.personalInfo.firstname.eq(filter.getFirstName()));
+        }
+        if (filter.getLastName()!= null){
+            predicates.add(user.personalInfo.lastname.eq(filter.getLastName()));
+        }*/
+
+        var predicate = QPredicate.builder()
+                .add(filter.getFirstName(), user.personalInfo.firstname::eq)
+                .add(filter.getLastName(), user.personalInfo.lastname::eq)
+                .buildAnd();
+
+        return new JPAQuery<Double>(session)
+                .select(payment.amount.avg())
+                .from(payment)
+                .join(payment.receiver, user)
+//                .where(predicates.toArray(Predicate[]::new))
+                .where(predicate)
                 .fetchOne();
     }
 
