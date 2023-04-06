@@ -105,6 +105,11 @@
         <mapping class="com.example.hibernate.inheritance_mapping.join.ProgrammerJoin"/>
         <mapping class="com.example.hibernate.inheritance_mapping.join.ManagerJoin"/>
 
+        <mapping class="com.example.hibernate.performance.UserPerformanceWithFetchEager"/>
+        <mapping class="com.example.hibernate.performance.CompanyPerformance"/>
+        <mapping class="com.example.hibernate.performance.PaymentPerformance"/>
+        <mapping class="com.example.hibernate.performance.UserTeamPerformance"/>
+        <mapping class="com.example.hibernate.performance.TeamPerformance"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
