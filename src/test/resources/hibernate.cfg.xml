@@ -111,6 +111,10 @@
         <mapping class="com.example.hibernate.performance.UserTeamPerformance"/>
         <mapping class="com.example.hibernate.performance.TeamPerformance"/>
 
+        <mapping class="com.example.hibernate.performance.batch_size.UserPerformanceWithBatchSize"/>
+        <mapping class="com.example.hibernate.performance.batch_size.PaymentBatchSize"/>
+        <mapping class="com.example.hibernate.performance.batch_size.CompanyBatchSize"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
