@@ -2,6 +2,7 @@ package com.example.hibernate.performance;
 
 import com.example.hibernate.BaseIT;
 import com.example.hibernate.performance.batch_size.UserPerformanceWithBatchSize;
+import com.example.hibernate.performance.fetch.UserPerformanceWithFetchModeSubselect;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,25 @@ class PerformanceIT extends BaseIT {
             assertTrue(query.contains("receiver_id in(?,?,?)"));
             assertTrue(query.contains("id in(?,?)"));//company by ids
             assertEquals(2, countMatches(query, "from company"));
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntityWithFetchEagerAndFetchModeSubselect_whenGetEntityWithHqlQuery_thenHibernateDoBatchSelectWithSubselectForEntitiesOfMappedFields() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+
+            session.createQuery("select u from UserPerformanceWithFetchModeSubselect u where 1 = 1",
+                            UserPerformanceWithFetchModeSubselect.class)
+                    .list();
+
+            log.warn(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("select u1_0.id, u1_0.username from users u1_0 where 1=1")//select
+                       && query.contains("from payment")
+                       && query.contains("receiver_id in(select u1_0.id from users u1_0 where 1=1)"));//subselect
             outContent.reset();
             System.setOut(originalOut);
         }
