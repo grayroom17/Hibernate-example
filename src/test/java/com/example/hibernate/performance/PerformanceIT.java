@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
-import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -184,6 +183,24 @@ class PerformanceIT extends BaseIT {
             log.info("selected users: {} , but selected rows: {}", users.size(), rows.size());
             assertTrue(rows.size() > users.size());
 
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithFindOrGetMethodsUsingFetchProfile_thenHibernateDoSelectAccordingByFetchProfile() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            session.enableFetchProfile("withCompanyAndPayments");
+
+            session.find(User.class, 10L);
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users")
+                       && query.contains("join company")
+                       && query.contains("join payment"));
             outContent.reset();
             System.setOut(originalOut);
         }

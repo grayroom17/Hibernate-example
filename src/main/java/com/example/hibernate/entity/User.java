@@ -5,11 +5,22 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@FetchProfile(name = "withCompanyAndPayments",
+        fetchOverrides = {
+                @FetchProfile.FetchOverride(entity = User.class,
+                        association = "company",
+                        mode = FetchMode.JOIN),
+                @FetchProfile.FetchOverride(entity = User.class,
+                        association = "payments",
+                        mode = FetchMode.JOIN)
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
