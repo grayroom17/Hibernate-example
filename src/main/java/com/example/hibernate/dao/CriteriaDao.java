@@ -126,6 +126,19 @@ public class CriteriaDao {
         return session.createQuery(criteria).list();
     }
 
+    public List<User> getAllUsersAndFetchCompaniesAndPayments(Session session) {
+        var criteriaBuilder = session.getCriteriaBuilder();
+
+        var criteria = criteriaBuilder.createQuery(User.class);
+        var users = criteria.from(User.class);
+        users.join(User_.company);
+        users.fetch(User_.company);
+        users.join(User_.payments);
+        users.fetch(User_.payments);
+        criteria.select(users);
+
+        return session.createQuery(criteria).list();
+    }
 
     public static CriteriaDao getInstance() {
         return INSTANCE;

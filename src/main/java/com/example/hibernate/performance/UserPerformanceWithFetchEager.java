@@ -38,5 +38,5 @@ public class UserPerformanceWithFetchEager extends BaseEntity<Long> {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "receiver", fetch = FetchType.EAGER)
-    List<PaymentPerformance> payment = new ArrayList<>();
+    List<PaymentPerformance> payments = new ArrayList<>();
 }

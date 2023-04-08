@@ -1,13 +1,18 @@
 package com.example.hibernate.performance;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.dao.CriteriaDao;
+import com.example.hibernate.dao.QueryDslDao;
+import com.example.hibernate.entity.User;
 import com.example.hibernate.performance.batch_size.UserPerformanceWithBatchSize;
 import com.example.hibernate.performance.fetch.UserPerformanceWithFetchModeSubselect;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 class PerformanceIT extends BaseIT {
 
+    private final CriteriaDao criteriaDao = CriteriaDao.getInstance();
+    private final QueryDslDao queryDslDao = QueryDslDao.getInstance();
 
     @Test
     void givenEntityWithFetchEagerForSeveralFields_whenGetEntityWithFindOrGetMethods_thenHibernateDoOnlyOneSelectQueryWithSeveralJoins() {
@@ -24,7 +31,7 @@ class PerformanceIT extends BaseIT {
 
             session.find(UserPerformanceWithFetchEager.class, 10L);
 
-            log.warn(outContent.toString());
+            log.info(outContent.toString());
             var query = prepareQuery();
             assertTrue(query.contains("from users")
                        && query.contains("join company")
@@ -45,7 +52,7 @@ class PerformanceIT extends BaseIT {
                             UserPerformanceWithFetchEager.class)
                     .list();
 
-            log.warn(outContent.toString());
+            log.info(outContent.toString());
             var query = prepareQuery();
             assertTrue(query.contains("from users")
                        && query.contains("from company")
@@ -69,7 +76,7 @@ class PerformanceIT extends BaseIT {
                             UserPerformanceWithBatchSize.class)
                     .list();
 
-            log.warn(outContent.toString());
+            log.info(outContent.toString());
             var query = prepareQuery();
             assertTrue(query.contains("from users")
                        && query.contains("from payment")
@@ -92,11 +99,91 @@ class PerformanceIT extends BaseIT {
                             UserPerformanceWithFetchModeSubselect.class)
                     .list();
 
-            log.warn(outContent.toString());
+            log.info(outContent.toString());
             var query = prepareQuery();
             assertTrue(query.contains("select u1_0.id, u1_0.username from users u1_0 where 1=1")//select
                        && query.contains("from payment")
                        && query.contains("receiver_id in(select u1_0.id from users u1_0 where 1=1)"));//subselect
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntityWithFetchEagerForSeveralFields_whenGetEntityWithHqlQueryWithFetch_thenHibernateDoSelectOnCartesianProduct() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+
+            var users = session.createQuery("select u from UserPerformanceWithFetchEager u " +
+                                            "join fetch u.payments " +
+                                            "join fetch u.company " +
+                                            "where 1 = 1",
+                            UserPerformanceWithFetchEager.class)
+                    .list();
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+
+            //prepare native query
+            query = StringUtils.substringAfter(query, "Hibernate: ");
+            query = StringUtils.substringBefore(query, "Hibernate: ");
+            log.info(query);
+
+            var rows = session.createNativeQuery(query, Object.class).list();
+
+            log.info("selected users: {} , but selected rows: {}", users.size(), rows.size());
+            assertTrue(rows.size() > users.size());
+
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithCriteriaQueryWithFetch_thenHibernateDoSelectOnCartesianProduct() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+
+            var users = criteriaDao.getAllUsersAndFetchCompaniesAndPayments(session);
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+
+            //prepare native query
+            query = StringUtils.substringAfter(query, "Hibernate: ");
+            query = StringUtils.substringBefore(query, "Hibernate: ");
+            log.info(query);
+
+            var rows = session.createNativeQuery(query, Object.class).list();
+
+            log.info("selected users: {} , but selected rows: {}", users.size(), rows.size());
+            assertTrue(rows.size() > users.size());
+
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithDslQueryWithFetch_thenHibernateDoSelectOnCartesianProduct() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+
+            var users = queryDslDao.getAllUsersAndFetchCompaniesAndPayments(session);
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+
+            //prepare native query
+            query = StringUtils.substringAfter(query, "Hibernate: ");
+            query = StringUtils.substringBefore(query, "Hibernate: ");
+            log.info(query);
+
+            var rows = session.createNativeQuery(query, Object.class).list();
+
+            log.info("selected users: {} , but selected rows: {}", users.size(), rows.size());
+            assertTrue(rows.size() > users.size());
+
             outContent.reset();
             System.setOut(originalOut);
         }
