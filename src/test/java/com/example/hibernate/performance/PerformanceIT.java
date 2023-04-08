@@ -4,14 +4,18 @@ import com.example.hibernate.BaseIT;
 import com.example.hibernate.dao.CriteriaDao;
 import com.example.hibernate.dao.QueryDslDao;
 import com.example.hibernate.entity.User;
+import com.example.hibernate.entity.UserTeam;
 import com.example.hibernate.performance.batch_size.UserPerformanceWithBatchSize;
 import com.example.hibernate.performance.fetch.UserPerformanceWithFetchModeSubselect;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.graph.GraphSemantic;
+import org.hibernate.graph.RootGraph;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
+import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -189,7 +193,7 @@ class PerformanceIT extends BaseIT {
     }
 
     @Test
-    void givenEntity_whenGetEntityWithFindOrGetMethodsUsingFetchProfile_thenHibernateDoSelectAccordingByFetchProfile() {
+    void givenEntity_whenGetEntityWithFindOrGetMethodsUsingFetchProfile_thenHibernateDoSelectAccordingToFetchProfile() {
         try (var session = sessionFactory.openSession()) {
             System.setOut(new PrintStream(outContent));
             session.enableFetchProfile("withCompanyAndPayments");
@@ -201,6 +205,76 @@ class PerformanceIT extends BaseIT {
             assertTrue(query.contains("from users")
                        && query.contains("join company")
                        && query.contains("join payment"));
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithFindUsingEntityGraph_thenHibernateDoSelectAccordingToEntityGraph() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            RootGraph<?> graph = session.getEntityGraph("graphWithAllFields");
+
+
+            Map<String, Object> properties = Map.of(GraphSemantic.LOAD.getJakartaHintName(), graph);
+            session.find(User.class, 10L, properties);
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users")
+                       && query.contains("join company")
+                       && query.contains("join payment")
+                       && query.contains("join profile")
+                       && query.contains("join users_team")
+                       && query.contains("join team"));
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithHqlQueryUsingEntityGraph_thenHibernateDoSelectAccordingToEntityGraph() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            RootGraph<?> graph = session.getEntityGraph("graphWithAllFields");
+
+            session.createQuery("select u from User u", User.class)
+                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), graph)
+                    .list();
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users")
+                       && query.contains("join company")
+                       && query.contains("join payment")
+                       && query.contains("join profile")
+                       && query.contains("join users_team")
+                       && query.contains("join team"));
+            outContent.reset();
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    void givenEntity_whenGetEntityWithHqlQueryUsingProgrammaticallyEntityGraph_thenHibernateDoSelectAccordingToEntityGraph() {
+        try (var session = sessionFactory.openSession()) {
+            System.setOut(new PrintStream(outContent));
+            var graph = session.createEntityGraph(User.class);
+            graph.addAttributeNodes("payments", "userTeams");
+            var subGraph = graph.addSubgraph("userTeams", UserTeam.class);
+            subGraph.addAttributeNodes("team");
+
+            session.createQuery("select u from User u", User.class)
+                    .setHint(GraphSemantic.LOAD.getJakartaHintName(), graph)
+                    .list();
+
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users")
+                       && query.contains("join payment")
+                       && query.contains("join users_team")
+                       && query.contains("join team"));
             outContent.reset();
             System.setOut(originalOut);
         }
