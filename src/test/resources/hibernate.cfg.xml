@@ -105,6 +105,18 @@
         <mapping class="com.example.hibernate.inheritance_mapping.join.ProgrammerJoin"/>
         <mapping class="com.example.hibernate.inheritance_mapping.join.ManagerJoin"/>
 
+        <mapping class="com.example.hibernate.performance.UserPerformanceWithFetchEager"/>
+        <mapping class="com.example.hibernate.performance.CompanyPerformance"/>
+        <mapping class="com.example.hibernate.performance.PaymentPerformance"/>
+        <mapping class="com.example.hibernate.performance.UserTeamPerformance"/>
+        <mapping class="com.example.hibernate.performance.TeamPerformance"/>
+
+        <mapping class="com.example.hibernate.performance.batch_size.UserPerformanceWithBatchSize"/>
+        <mapping class="com.example.hibernate.performance.batch_size.PaymentBatchSize"/>
+        <mapping class="com.example.hibernate.performance.batch_size.CompanyBatchSize"/>
+
+        <mapping class="com.example.hibernate.performance.fetch.UserPerformanceWithFetchModeSubselect"/>
+        <mapping class="com.example.hibernate.performance.fetch.PaymentFetchModeSubselect"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

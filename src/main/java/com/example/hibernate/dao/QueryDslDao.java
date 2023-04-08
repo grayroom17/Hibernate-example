@@ -126,6 +126,15 @@ public class QueryDslDao {
                 .fetch();
     }
 
+    public List<User> getAllUsersAndFetchCompaniesAndPayments(Session session) {
+        return new JPAQuery<User>(session)
+                .select(user)
+                .from(user)
+                .join(user.company).fetchJoin()
+                .join(user.payments).fetchJoin()
+                .fetch();
+    }
+
     public static QueryDslDao getInstance() {
         return INSTANCE;
     }

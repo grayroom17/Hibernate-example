@@ -1,5 +1,6 @@
-package com.example.hibernate.entity;
+package com.example.hibernate.performance;
 
+import com.example.hibernate.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,11 +14,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Payment extends BaseEntity<Long> {
+@Table(name = "payment")
+public class PaymentPerformance extends BaseEntity<Long> {
     @Column(nullable = false)
     Integer amount;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "receiver_id")
-    User receiver;
+    UserPerformanceWithFetchEager receiver;
 }

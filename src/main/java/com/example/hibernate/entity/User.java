@@ -5,11 +5,37 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@NamedEntityGraph(name = "graphWithAllFields",
+        attributeNodes = {
+                @NamedAttributeNode(value = "company"),
+                @NamedAttributeNode(value = "payments"),
+                @NamedAttributeNode(value = "userTeams", subgraph = "graphWithTeams"),
+                @NamedAttributeNode(value = "profile")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "graphWithTeams",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "team")
+                        })
+        })
+@FetchProfile(name = "withCompanyAndPayments",
+        fetchOverrides = {
+                @FetchProfile.FetchOverride(entity = User.class,
+                        association = "company",
+                        mode = FetchMode.JOIN),
+                @FetchProfile.FetchOverride(entity = User.class,
+                        association = "payments",
+                        mode = FetchMode.JOIN)
+        })
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -32,13 +58,13 @@ public class User extends BaseEntity<Long> {
     @Type(JsonBinaryType.class)
     String info;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     Company company;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Profile profile;
 
     @ToString.Exclude
@@ -51,5 +77,5 @@ public class User extends BaseEntity<Long> {
     @EqualsAndHashCode.Exclude
     @Builder.Default
     @OneToMany(mappedBy = "receiver")
-    List<Payment> payments = new ArrayList<>();
+    Set<Payment> payments = new HashSet<>();
 }

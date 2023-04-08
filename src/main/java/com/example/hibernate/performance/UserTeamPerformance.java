@@ -1,5 +1,6 @@
-package com.example.hibernate.entity;
+package com.example.hibernate.performance;
 
+import com.example.hibernate.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,26 +16,26 @@ import java.time.Instant;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users_team")
-public class UserTeam extends BaseEntity<Long> {
+public class UserTeamPerformance extends BaseEntity<Long> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
-    User user;
+    UserPerformanceWithFetchEager user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "team_id")
-    Team team;
+    TeamPerformance team;
 
     Instant joined;
 
     String createdBy;
 
-    public void setUser(User user) {
+    public void setUser(UserPerformanceWithFetchEager user) {
         this.user = user;
         user.getUserTeams().add(this);
     }
 
-    public void setTeam(Team team) {
+    public void setTeam(TeamPerformance team) {
         this.team = team;
         team.getUserTeams().add(this);
     }
