@@ -6,12 +6,8 @@ import com.example.hibernate.acid.optimistic.lock_type.dirty.PaymentOptimisticLo
 import com.example.hibernate.acid.pessimistic.PaymentPessimisticLock;
 import com.example.hibernate.entity.Payment;
 import com.example.hibernate.entity.User;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.LockTimeoutException;
-import jakarta.persistence.OptimisticLockException;
-import jakarta.persistence.PersistenceException;
+import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.AvailableSettings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -269,6 +265,55 @@ class AcidIT extends BaseIT {
             var exception = assertThrows(PersistenceException.class, transaction::commit);
             assertEquals("ERROR: cannot execute UPDATE in a read-only transaction", exception.getCause().getCause().getMessage());
             session.getTransaction().rollback();
+        }
+    }
+
+    @Test
+    void givenData_whenTryFindDataWithNonTransactionalDataAccess_thenHibernateFindSpecifiedData() {
+        try (var session = sessionFactory.openSession()) {
+            var users = session.createQuery("select u from User u", User.class).list();
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
+        }
+    }
+
+    @Test
+    void givenData_whenTryFindDataAndUpdateItWithNonTransactionalDataAccess_thenHibernateUpdateNothing() {
+        try (var session = sessionFactory.openSession()) {
+            var users = session.createQuery("select u from User u", User.class).list();
+
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
+
+            var someUser = users.stream().findFirst().orElseThrow();
+            someUser.setUsername("newUserName");
+
+            System.setOut(new PrintStream(outContent));
+            session.merge(someUser);
+            log.info(outContent.toString());
+            var query = prepareQuery();
+
+            assertFalse(query.contains("update users"));
+
+            System.setOut(originalOut);
+            outContent.reset();
+        }
+    }
+
+    @Test
+    void givenData_whenTryFindDataAndUpdateItThroughFlushWithNonTransactionalDataAccessAnd_thenHibernateThrows() {
+        try (var session = sessionFactory.openSession()) {
+            var users = session.createQuery("select u from User u", User.class).list();
+
+            assertNotNull(users);
+            assertFalse(users.isEmpty());
+
+            var someUser = users.stream().findFirst().orElseThrow();
+            someUser.setUsername("newUserName");
+
+            session.merge(someUser);
+            var exception = assertThrows(TransactionRequiredException.class, session::flush);
+            assertEquals("no transaction is in progress", exception.getMessage());
         }
     }
 
