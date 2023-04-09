@@ -5,12 +5,14 @@ import com.example.hibernate.acid.optimistic.lock_type.all.PaymentOptimisticLock
 import com.example.hibernate.acid.optimistic.lock_type.dirty.PaymentOptimisticLockTypeDirty;
 import com.example.hibernate.acid.pessimistic.PaymentPessimisticLock;
 import com.example.hibernate.entity.Payment;
+import com.example.hibernate.entity.User;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.jpa.SpecHints;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -156,7 +158,7 @@ class AcidIT extends BaseIT {
 
     //lock timeout do not work???
     @Test
-    void givenEntity_whenTryLastCommitWinsWithPessimisticLock_thenHibernateThrowOptimisticLockException() {
+    void givenEntity_whenTryLastCommitWinsWithPessimisticLock_thenHibernateThrowLockTimeoutException() {
         try (var session1 = sessionFactory.openSession();
              var session2 = sessionFactory.openSession()) {
 
@@ -181,6 +183,92 @@ class AcidIT extends BaseIT {
 //
 //            session2.getTransaction().commit();
 //            session1.getTransaction().commit();
+        }
+    }
+
+    @Test
+    void givenEntityAndDefaultReadOnlyTrue_whenTryToUpdateEntity_thenHibernateDoNotUpdateAllEntity() {
+        try (var session = sessionFactory.openSession()) {
+
+            session.beginTransaction();
+            session.setDefaultReadOnly(true);
+
+            var userId = 10L;
+            var user = session.find(User.class, userId);
+            user.setUsername("newUserName");
+
+            System.setOut(new PrintStream(outContent));
+            session.getTransaction().commit();
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertFalse(query.contains("update users"));
+            System.setOut(originalOut);
+            outContent.reset();
+        }
+    }
+
+    @Test
+    void givenEntityAndReadOnlyTrue_whenTryToUpdateEntity_thenHibernateDoNotUpdateSpecifiedEntity() {
+        try (var session = sessionFactory.openSession()) {
+
+            session.beginTransaction();
+
+            var userId = 10L;
+            var user = session.find(User.class, userId);
+            session.setReadOnly(user, true);
+
+            user.setUsername("newUserName");
+
+            System.setOut(new PrintStream(outContent));
+            session.getTransaction().commit();
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertFalse(query.contains("update users"));
+            System.setOut(originalOut);
+            outContent.reset();
+        }
+    }
+
+    @Test
+    void givenEntity_whenFindEntityWithReadOnlyTrue_thenHibernateDoNotUpdateSpecifiedEntities() {
+        try (var session = sessionFactory.openSession()) {
+
+            session.beginTransaction();
+
+            var userId = 10L;
+            var user = session.createQuery("select u from User u where u.id = :id", User.class)
+                    .setParameter("id", userId)
+                    .setReadOnly(true)
+                    .uniqueResult();
+
+            user.setUsername("newUserName");
+
+            System.setOut(new PrintStream(outContent));
+            session.getTransaction().commit();
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertFalse(query.contains("update users"));
+            System.setOut(originalOut);
+            outContent.reset();
+        }
+    }
+
+    @Test
+    void givenEntity_whenSetTransactionReadOnlyModeInDataBase_thenHibernateThrow() {
+        try (var session = sessionFactory.openSession()) {
+
+            session.beginTransaction();
+            //noinspection deprecation
+            session.createNativeQuery("set transaction read only").executeUpdate();
+
+            var userId = 10L;
+            var user = session.find(User.class, userId);
+            user.setUsername("newUserName");
+
+            var transaction = session.getTransaction();
+            var exception = assertThrows(PersistenceException.class, transaction::commit);
+            assertEquals("ERROR: cannot execute UPDATE in a read-only transaction", exception.getCause().getCause().getMessage());
+            session.getTransaction().rollback();
         }
     }
 
