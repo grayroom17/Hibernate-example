@@ -1,12 +1,10 @@
-package com.example.hibernate.entity;
+package com.example.hibernate.acid.pessimistic;
 
+import com.example.hibernate.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.OptimisticLockType;
-import org.hibernate.annotations.OptimisticLocking;
-
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,15 +13,12 @@ import org.hibernate.annotations.OptimisticLocking;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@OptimisticLocking(type = OptimisticLockType.VERSION)
-public class Payment extends BaseEntity<Long> {
+@Table(name = "payment")
+public class PaymentPessimisticLock extends BaseEntity<Long> {
     @Column(nullable = false)
     Integer amount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    User receiver;
-
-    @Version()
-    Long version;
+    UserPessimisticLock receiver;
 }
