@@ -3,14 +3,19 @@ package com.example.hibernate.acid;
 import com.example.hibernate.BaseIT;
 import com.example.hibernate.acid.optimistic.lock_type.all.PaymentOptimisticLockTypeAll;
 import com.example.hibernate.acid.optimistic.lock_type.dirty.PaymentOptimisticLockTypeDirty;
+import com.example.hibernate.acid.pessimistic.PaymentPessimisticLock;
 import com.example.hibernate.entity.Payment;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.jpa.SpecHints;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcidIT extends BaseIT {
 
     @Test
-    void givenEntityWithOptimisticLockVersionAndLockModeTypeOptimistic_whenTrySecondCommitWins_thenHibernateThrowOptimisticLockException() {
+    void givenEntityWithOptimisticLockVersionAndLockModeTypeOptimistic_whenTryLastCommitWins_thenHibernateThrowOptimisticLockException() {
         try (var session1 = sessionFactory.openSession();
              var session2 = sessionFactory.openSession()) {
 
@@ -69,7 +74,7 @@ class AcidIT extends BaseIT {
     }
 
     @Test
-    void givenEntityWithOptimisticLockAllAndLockModeTypeOptimistic_whenTrySecondCommitWins_thenHibernateThrowOptimisticLockException() {
+    void givenEntityWithOptimisticLockAllAndLockModeTypeOptimistic_whenTryLastCommitWins_thenHibernateThrowOptimisticLockException() {
         try (var session1 = sessionFactory.openSession();
              var session2 = sessionFactory.openSession()) {
 
@@ -109,7 +114,7 @@ class AcidIT extends BaseIT {
     }
 
     @Test
-    void givenEntityWithOptimisticLockDirtyAndLockModeTypeOptimistic_whenTrySecondCommitWins_thenHibernateThrowOptimisticLockException() {
+    void givenEntityWithOptimisticLockDirtyAndLockModeTypeOptimistic_whenTryLastCommitWins_thenHibernateThrowOptimisticLockException() {
         try (var session1 = sessionFactory.openSession();
              var session2 = sessionFactory.openSession()) {
 
@@ -146,6 +151,36 @@ class AcidIT extends BaseIT {
             assertFalse(query.contains("and receiver_id=?"));
             System.setOut(originalOut);
             outContent.reset();
+        }
+    }
+
+    //lock timeout do not work???
+    @Test
+    void givenEntity_whenTryLastCommitWinsWithPessimisticLock_thenHibernateThrowOptimisticLockException() {
+        try (var session1 = sessionFactory.openSession();
+             var session2 = sessionFactory.openSession()) {
+
+            session1.beginTransaction();
+            session2.beginTransaction();
+
+            var paymentId = 1L;
+            var paymentTx1 = session1.createQuery("select p from PaymentPessimisticLock p where p.id = :id", PaymentPessimisticLock.class)
+                    .setParameter("id", paymentId)
+                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+//                    .setHint(AvailableSettings.JAKARTA_LOCK_TIMEOUT, 5000)
+                    .setHint(AvailableSettings.JAKARTA_LOCK_TIMEOUT, 0)
+                    .uniqueResult();
+            paymentTx1.setAmount(paymentTx1.getAmount() * 2);
+
+//            Map<String, Object> properties = Map.of(AvailableSettings.JAKARTA_LOCK_TIMEOUT, 5000);
+            Map<String, Object> properties = Map.of(AvailableSettings.JAKARTA_LOCK_TIMEOUT, 0);
+            assertThrows(LockTimeoutException.class, () ->
+                    session2.find(PaymentPessimisticLock.class, paymentId, LockModeType.PESSIMISTIC_WRITE, properties));
+//            var paymentTx2 = session2.find(PaymentPessimisticLock.class, paymentId,LockModeType.PESSIMISTIC_WRITE, properties);
+//            paymentTx2.setAmount(paymentTx2.getAmount() * 4);
+//
+//            session2.getTransaction().commit();
+//            session1.getTransaction().commit();
         }
     }
 
