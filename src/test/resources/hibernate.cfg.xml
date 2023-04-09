@@ -118,6 +118,12 @@
         <mapping class="com.example.hibernate.performance.fetch.UserPerformanceWithFetchModeSubselect"/>
         <mapping class="com.example.hibernate.performance.fetch.PaymentFetchModeSubselect"/>
 
+        <mapping class="com.example.hibernate.acid.optimistic.lock_type.all.UserOptimisticLockTypeAll"/>
+        <mapping class="com.example.hibernate.acid.optimistic.lock_type.all.PaymentOptimisticLockTypeAll"/>
+
+        <mapping class="com.example.hibernate.acid.optimistic.lock_type.dirty.UserOptimisticLockTypeDirty"/>
+        <mapping class="com.example.hibernate.acid.optimistic.lock_type.dirty.PaymentOptimisticLockTypeDirty"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
