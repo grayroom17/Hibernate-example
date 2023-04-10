@@ -127,6 +127,8 @@
         <mapping class="com.example.hibernate.acid.pessimistic.UserPessimisticLock"/>
         <mapping class="com.example.hibernate.acid.pessimistic.PaymentPessimisticLock"/>
 
+        <mapping class="com.example.hibernate.callbacks.UserCallback"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
