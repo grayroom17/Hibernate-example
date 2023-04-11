@@ -129,6 +129,10 @@
 
         <mapping class="com.example.hibernate.callbacks.UserCallback"/>
 
+        <mapping class="com.example.hibernate.listeners.UserWithListener"/>
+        <mapping class="com.example.hibernate.listeners.TeamWithListener"/>
+        <mapping class="com.example.hibernate.listeners.UserTeamWithListener"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
