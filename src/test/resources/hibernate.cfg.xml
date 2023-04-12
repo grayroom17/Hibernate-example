@@ -127,11 +127,11 @@
         <mapping class="com.example.hibernate.acid.pessimistic.UserPessimisticLock"/>
         <mapping class="com.example.hibernate.acid.pessimistic.PaymentPessimisticLock"/>
 
-        <mapping class="com.example.hibernate.callbacks.UserCallback"/>
+        <mapping class="com.example.hibernate.listeners.callback.UserCallback"/>
 
-        <mapping class="com.example.hibernate.listeners.UserWithListener"/>
-        <mapping class="com.example.hibernate.listeners.TeamWithListener"/>
-        <mapping class="com.example.hibernate.listeners.UserTeamWithListener"/>
+        <mapping class="com.example.hibernate.listeners.listener.entity.UserWithListener"/>
+        <mapping class="com.example.hibernate.listeners.listener.entity.TeamWithListener"/>
+        <mapping class="com.example.hibernate.listeners.listener.entity.UserTeamWithListener"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

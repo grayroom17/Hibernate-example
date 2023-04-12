@@ -1,6 +1,7 @@
 package com.example.hibernate.callbacks;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.listeners.callback.UserCallback;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

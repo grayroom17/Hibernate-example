@@ -1,4 +1,4 @@
-package com.example.hibernate.listeners;
+package com.example.hibernate.listeners.listener.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

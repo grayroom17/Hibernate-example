@@ -1,6 +1,6 @@
-package com.example.hibernate.listeners.callback;
+package com.example.hibernate.listeners.listener;
 
-import com.example.hibernate.listeners.AuditableEntity;
+import com.example.hibernate.listeners.listener.entity.AuditableEntity;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 

@@ -1,6 +1,9 @@
 package com.example.hibernate.listeners;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.listeners.listener.entity.TeamWithListener;
+import com.example.hibernate.listeners.listener.entity.UserTeamWithListener;
+import com.example.hibernate.listeners.listener.entity.UserWithListener;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

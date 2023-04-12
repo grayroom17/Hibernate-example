@@ -1,6 +1,6 @@
-package com.example.hibernate.listeners.callback;
+package com.example.hibernate.listeners.listener;
 
-import com.example.hibernate.listeners.UserTeamWithListener;
+import com.example.hibernate.listeners.listener.entity.UserTeamWithListener;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
 

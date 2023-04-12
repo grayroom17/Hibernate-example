@@ -1,6 +1,6 @@
-package com.example.hibernate.listeners;
+package com.example.hibernate.listeners.listener.entity;
 
-import com.example.hibernate.listeners.callback.AuditableEntityListener;
+import com.example.hibernate.listeners.listener.AuditableEntityListener;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;

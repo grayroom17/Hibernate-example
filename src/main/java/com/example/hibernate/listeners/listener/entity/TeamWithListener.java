@@ -1,4 +1,4 @@
-package com.example.hibernate.listeners;
+package com.example.hibernate.listeners.listener.entity;
 
 import com.example.hibernate.entity.BaseEntity;
 import jakarta.persistence.Column;

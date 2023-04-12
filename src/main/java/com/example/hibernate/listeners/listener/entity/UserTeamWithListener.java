@@ -1,7 +1,7 @@
-package com.example.hibernate.listeners;
+package com.example.hibernate.listeners.listener.entity;
 
 import com.example.hibernate.entity.BaseEntity;
-import com.example.hibernate.listeners.callback.CountableEntityListener;
+import com.example.hibernate.listeners.listener.CountableEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

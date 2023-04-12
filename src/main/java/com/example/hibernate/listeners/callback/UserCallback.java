@@ -1,4 +1,4 @@
-package com.example.hibernate.callbacks;
+package com.example.hibernate.listeners.callback;
 
 import com.example.hibernate.entity.BaseEntity;
 import jakarta.persistence.*;
