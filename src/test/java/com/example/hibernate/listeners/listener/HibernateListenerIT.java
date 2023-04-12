@@ -1,4 +1,4 @@
-package com.example.hibernate.listeners;
+package com.example.hibernate.listeners.listener;
 
 import com.example.hibernate.BaseIT;
 import com.example.hibernate.listeners.listener.entity.TeamWithListener;

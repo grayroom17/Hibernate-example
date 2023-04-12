@@ -1,4 +1,4 @@
-package com.example.hibernate.callbacks;
+package com.example.hibernate.listeners.callback;
 
 import com.example.hibernate.BaseIT;
 import com.example.hibernate.listeners.callback.UserCallback;

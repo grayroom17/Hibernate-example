@@ -133,6 +133,8 @@
         <mapping class="com.example.hibernate.listeners.listener.entity.TeamWithListener"/>
         <mapping class="com.example.hibernate.listeners.listener.entity.UserTeamWithListener"/>
 
+        <mapping class="com.example.hibernate.listeners.event_listener.Audit"/>
+
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
