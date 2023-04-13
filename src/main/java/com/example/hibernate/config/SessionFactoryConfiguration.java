@@ -14,7 +14,9 @@ public class SessionFactoryConfiguration {
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAttributeConverter(BirthdayConverter.class, true);
         configuration.registerTypeOverride(new JsonBinaryType(), new String[]{JsonBinaryType.INSTANCE.getName()});
+//        configuration.setInterceptor(new GlobalInterceptor());
         configuration.configure();
+
         return configuration.buildSessionFactory();
     }
 }

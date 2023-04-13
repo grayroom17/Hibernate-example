@@ -9,7 +9,6 @@ import com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserForOne
 import com.example.hibernate.many.to.many.one_to_many_to_one.with_set.UserTeamForOneToManyToOneTestsWithSet;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
