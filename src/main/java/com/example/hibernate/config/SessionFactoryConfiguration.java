@@ -18,6 +18,7 @@ public class SessionFactoryConfiguration {
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAttributeConverter(BirthdayConverter.class, true);
         configuration.registerTypeOverride(new JsonBinaryType(), new String[]{JsonBinaryType.INSTANCE.getName()});
+//        configuration.setInterceptor(new GlobalInterceptor());
         configuration.configure();
 
         SessionFactory sessionFactory = configuration.buildSessionFactory();
@@ -25,6 +26,7 @@ public class SessionFactoryConfiguration {
         EventListenerRegistry eventListenerRegistry = sessionFactoryImpl.getServiceRegistry().getService(EventListenerRegistry.class);
         eventListenerRegistry.appendListeners(EventType.PRE_INSERT, new AuditTableEventListener());
         eventListenerRegistry.appendListeners(EventType.PRE_DELETE, new AuditTableEventListener());
+
         return sessionFactory;
     }
 }
