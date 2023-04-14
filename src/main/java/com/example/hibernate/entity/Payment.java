@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OptimisticLockType;
 import org.hibernate.annotations.OptimisticLocking;
+import org.hibernate.envers.Audited;
 
 
 @Data
@@ -16,6 +17,7 @@ import org.hibernate.annotations.OptimisticLocking;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @OptimisticLocking(type = OptimisticLockType.VERSION)
+@Audited
 public class Payment extends BaseEntity<Long> {
     @Column(nullable = false)
     Integer amount;

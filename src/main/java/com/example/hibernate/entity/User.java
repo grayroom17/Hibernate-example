@@ -8,6 +8,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,6 +46,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
+@Audited
 public class User extends BaseEntity<Long> {
 
     @Column(unique = true)
@@ -55,6 +58,7 @@ public class User extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     Role role;
 
+    @NotAudited
     @Type(JsonBinaryType.class)
     String info;
 
@@ -70,6 +74,7 @@ public class User extends BaseEntity<Long> {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
+    @NotAudited
     @OneToMany(mappedBy = "user")
     List<UserTeam> userTeams = new ArrayList<>();
 
