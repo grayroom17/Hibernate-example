@@ -21,6 +21,7 @@
         <mapping class="com.example.hibernate.entity.Team"/>
         <mapping class="com.example.hibernate.entity.UserTeam"/>
         <mapping class="com.example.hibernate.entity.Payment"/>
+        <mapping class="com.example.hibernate.entity.RevInfo"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

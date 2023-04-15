@@ -14,8 +14,9 @@
         <property name="hibernate.connection.useUnicode">true</property>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
-        <property name="hibernate.hbm2ddl.auto">validate</property>
-        <property name="hbm2ddl.auto">validate</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="org.hibernate.envers.default_schema">aud</property>
 
         <mapping class="com.example.hibernate.entity.User"/>
         <mapping class="com.example.hibernate.entity.Company"/>
@@ -134,6 +135,9 @@
         <mapping class="com.example.hibernate.listeners.listener.entity.UserTeamWithListener"/>
 
         <mapping class="com.example.hibernate.listeners.event_listener.Audit"/>
+        <mapping class="com.example.hibernate.listeners.event_listener.UserForEventListener"/>
+
+        <mapping class="com.example.hibernate.entity.RevInfo"/>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->

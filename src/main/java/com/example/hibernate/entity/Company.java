@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
 @Audited
+@Entity
 public class Company extends BaseEntity<Long> {
 
     @Column(unique = true)

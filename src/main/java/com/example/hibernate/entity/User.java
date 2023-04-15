@@ -45,8 +45,8 @@ import java.util.Set;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
 @Audited
+@Table(name = "users")
 public class User extends BaseEntity<Long> {
 
     @Column(unique = true)

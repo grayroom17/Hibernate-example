@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Audited
 @Table(name = "team")
 public class Team extends BaseEntity<Long> {
 
@@ -30,3 +32,7 @@ public class Team extends BaseEntity<Long> {
     @OneToMany(mappedBy = "team")
     List<UserTeam> userTeams = new ArrayList<>();
 }
+
+
+
+

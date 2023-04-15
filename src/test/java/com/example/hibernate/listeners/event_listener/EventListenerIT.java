@@ -3,7 +3,6 @@ package com.example.hibernate.listeners.event_listener;
 import com.example.hibernate.BaseIT;
 import com.example.hibernate.config.SessionFactoryConfiguration;
 import com.example.hibernate.converter.BirthdayConverter;
-import com.example.hibernate.entity.User;
 import com.example.hibernate.helpers.MigrationHelper;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import org.hibernate.SessionFactory;
@@ -58,7 +57,7 @@ class EventListenerIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = User.builder()
+            UserForEventListener user = UserForEventListener.builder()
                     .username("User Name1")
                     .build();
 
@@ -73,7 +72,7 @@ class EventListenerIT extends BaseIT {
                             "and aud.entityContent = :content",
                             Audit.class)
                     .setParameter("operation", INSERT)
-                    .setParameter("entityClass", User.class.getSimpleName())
+                    .setParameter("entityClass", UserForEventListener.class.getSimpleName())
                     .setParameter("content", user.toString())
                     .uniqueResult();
 
@@ -86,7 +85,7 @@ class EventListenerIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = User.builder()
+            UserForEventListener user = UserForEventListener.builder()
                     .username("User Name2")
                     .build();
 
@@ -95,7 +94,7 @@ class EventListenerIT extends BaseIT {
 
             session.beginTransaction();
 
-            var foundedUser = session.find(User.class, user.getId());
+            var foundedUser = session.find(UserForEventListener.class, user.getId());
             assertNotNull(foundedUser);
 
             session.remove(foundedUser);
@@ -111,7 +110,7 @@ class EventListenerIT extends BaseIT {
                             Audit.class)
                     .setParameter("operation", DELETE)
                     .setParameter("entityId", user.getId().toString())
-                    .setParameter("entityClass", User.class.getSimpleName())
+                    .setParameter("entityClass", UserForEventListener.class.getSimpleName())
                     .setParameter("content", user.toString())
                     .uniqueResult();
 

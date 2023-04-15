@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -11,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Audited
 @Entity
 public class Profile extends BaseEntity<Long> {
 
