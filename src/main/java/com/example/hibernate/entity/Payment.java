@@ -26,6 +26,6 @@ public class Payment extends BaseEntity<Long> {
     @JoinColumn(name = "receiver_id")
     User receiver;
 
-    @Version()
+    @Version
     Long version;
 }

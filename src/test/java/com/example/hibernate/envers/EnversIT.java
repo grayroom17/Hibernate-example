@@ -1,11 +1,12 @@
 package com.example.hibernate.envers;
 
 import com.example.hibernate.BaseIT;
-import com.example.hibernate.entity.User;
+import com.example.hibernate.entity.*;
 import org.hibernate.envers.AuditReaderFactory;
-import org.hibernate.envers.RevisionType;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hibernate.envers.RevisionType.*;
@@ -31,7 +32,8 @@ class EnversIT extends BaseIT {
 
             var auditReader = AuditReaderFactory.get(session);
 
-            @SuppressWarnings("unchecked") List<Object[]> revisions = auditReader.createQuery()
+            @SuppressWarnings("unchecked")
+            List<Object[]> revisions = auditReader.createQuery()
                     .forRevisionsOfEntity(User.class, false, true)
                     .getResultList();
 
@@ -71,7 +73,8 @@ class EnversIT extends BaseIT {
 
             var auditReader = AuditReaderFactory.get(session);
 
-            @SuppressWarnings("unchecked") List<Object[]> revisions = auditReader.createQuery()
+            @SuppressWarnings("unchecked")
+            List<Object[]> revisions = auditReader.createQuery()
                     .forRevisionsOfEntity(User.class, false, true)
                     .getResultList();
 
@@ -105,7 +108,8 @@ class EnversIT extends BaseIT {
 
             var auditReader = AuditReaderFactory.get(session);
 
-            @SuppressWarnings("unchecked") List<Object[]> revisions = auditReader.createQuery()
+            @SuppressWarnings("unchecked")
+            List<Object[]> revisions = auditReader.createQuery()
                     .forRevisionsOfEntity(User.class, false, true)
                     .getResultList();
 
@@ -116,5 +120,122 @@ class EnversIT extends BaseIT {
 
             assertNotNull(result);
         }
+    }
+
+    @Test
+    void complexTest() {
+        try (var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            User firstUser = User.builder()
+                    .username("Ivan001")
+                    .personalInfo(PersonalInfo.builder()
+                            .birthdate(new Birthday(LocalDate.of(1991, 10, 1)))
+                            .firstname("Ivan")
+                            .lastname("Bunin")
+                            .build())
+                    .role(Role.USER)
+                    .build();
+
+            Profile profileFirstUser = Profile.builder()
+                    .language("RU")
+                    .programmingLanguage("Java")
+                    .build();
+            profileFirstUser.setUser(firstUser);
+
+            Payment payment1FirstUser = Payment.builder()
+                    .amount(100)
+                    .receiver(firstUser)
+                    .build();
+            Payment payment2FirstUser = Payment.builder()
+                    .amount(300)
+                    .receiver(firstUser)
+                    .build();
+
+            User secondUser = User.builder()
+                    .username("Anton556")
+                    .personalInfo(PersonalInfo.builder()
+                            .birthdate(new Birthday(LocalDate.of(1992, 2, 15)))
+                            .firstname("Anton")
+                            .lastname("Fedorov")
+                            .build())
+                    .role(Role.USER)
+                    .build();
+
+            Profile profileSecondUser = Profile.builder()
+                    .language("EN")
+                    .programmingLanguage("PHP")
+                    .build();
+            profileSecondUser.setUser(secondUser);
+
+            Payment payment1SecondUser = Payment.builder()
+                    .amount(500)
+                    .receiver(secondUser)
+                    .build();
+            Payment payment2SecondUser = Payment.builder()
+                    .amount(50)
+                    .receiver(secondUser)
+                    .build();
+
+
+            Company google = Company.builder()
+                    .name("Amazon")
+                    .build();
+            google.addUser(firstUser);
+            google.addUser(secondUser);
+
+            Team developers = Team.builder()
+                    .name("developers")
+                    .build();
+
+            UserTeam userTeam1 = UserTeam.builder()
+                    .joined(Instant.now())
+                    .createdBy("SYSTEM")
+                    .build();
+            userTeam1.setTeam(developers);
+            userTeam1.setUser(firstUser);
+            UserTeam userTeam2 = UserTeam.builder()
+                    .joined(Instant.now())
+                    .createdBy("SYSTEM")
+                    .build();
+            userTeam2.setTeam(developers);
+            userTeam2.setUser(secondUser);
+
+            session.persist(firstUser);
+            session.persist(secondUser);
+            session.persist(payment1FirstUser);
+            session.persist(payment2FirstUser);
+            session.persist(payment1SecondUser);
+            session.persist(payment2SecondUser);
+            session.persist(secondUser);
+            session.persist(google);
+            session.persist(developers);
+            session.persist(userTeam1);
+            session.persist(userTeam2);
+
+            session.getTransaction().commit();
+
+            var auditReader = AuditReaderFactory.get(session);
+
+            @SuppressWarnings("unchecked")
+            List<Object[]> usersAud = auditReader.createQuery().forRevisionsOfEntity(User.class, false, true).getResultList();
+            assertNotNull(usersAud);
+            assertFalse(usersAud.isEmpty());
+            var createRevFirstUser = usersAud.stream()
+                    .filter(rev -> ((User) rev[ENTITY]).getId().equals(firstUser.getId()))
+                    .filter(rev -> rev[REV_TYPE].equals(ADD))
+                    .findAny().orElseThrow();
+            assertNotNull(createRevFirstUser);
+            var createRevSecondUser = usersAud.stream()
+                    .filter(rev -> ((User) rev[ENTITY]).getId().equals(secondUser.getId()))
+                    .filter(rev -> rev[REV_TYPE].equals(ADD))
+                    .findAny().orElseThrow();
+            assertNotNull(createRevSecondUser);
+
+            System.out.println();
+
+        }
+
+
     }
 }
