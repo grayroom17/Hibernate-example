@@ -83,4 +83,9 @@ public class User extends BaseEntity<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "receiver")
     Set<Payment> payments = new HashSet<>();
+
+    public void addPayment(Payment payment){
+        getPayments().add(payment);
+        payment.setReceiver(this);
+    }
 }
