@@ -23,21 +23,21 @@ values ('BillGates', 'Bill', 'Gates', '1955-10-28', null, null,
        ('DianeGreene', 'Diane', 'Greene', '1955-01-01', null, null,
         (select id from company where name = 'Google'));
 
-insert into public.payment (id, amount, receiver_id)
-values (1, 100, (select id from users where username = 'BillGates')),
-       (2, 300, (select id from users where username = 'BillGates')),
-       (3, 500, (select id from users where username = 'BillGates')),
-       (4, 250, (select id from users where username = 'SteveJobs')),
-       (5, 600, (select id from users where username = 'SteveJobs')),
-       (6, 500, (select id from users where username = 'SteveJobs')),
-       (7, 400, (select id from users where username = 'TimCook')),
-       (8, 300, (select id from users where username = 'TimCook')),
-       (9, 500, (select id from users where username = 'SergeyBrin')),
-       (10, 500, (select id from users where username = 'SergeyBrin')),
-       (11, 500, (select id from users where username = 'SergeyBrin')),
-       (12, 300, (select id from users where username = 'DianeGreene')),
-       (13, 300, (select id from users where username = 'DianeGreene')),
-       (14, 300, (select id from users where username = 'DianeGreene'));
+insert into public.payment (amount, receiver_id)
+values (100, (select id from users where username = 'BillGates')),
+       (300, (select id from users where username = 'BillGates')),
+       (500, (select id from users where username = 'BillGates')),
+       (250, (select id from users where username = 'SteveJobs')),
+       (600, (select id from users where username = 'SteveJobs')),
+       (500, (select id from users where username = 'SteveJobs')),
+       (400, (select id from users where username = 'TimCook')),
+       (300, (select id from users where username = 'TimCook')),
+       (500, (select id from users where username = 'SergeyBrin')),
+       (500, (select id from users where username = 'SergeyBrin')),
+       (500, (select id from users where username = 'SergeyBrin')),
+       (300, (select id from users where username = 'DianeGreene')),
+       (300, (select id from users where username = 'DianeGreene')),
+       (300, (select id from users where username = 'DianeGreene'));
 
 
 

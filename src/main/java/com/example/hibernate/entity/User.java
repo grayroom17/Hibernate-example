@@ -8,6 +8,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.FetchProfile;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,6 +45,7 @@ import java.util.Set;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Audited
 @Table(name = "users")
 public class User extends BaseEntity<Long> {
 
@@ -55,6 +58,7 @@ public class User extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     Role role;
 
+    @NotAudited
     @Type(JsonBinaryType.class)
     String info;
 
@@ -70,6 +74,7 @@ public class User extends BaseEntity<Long> {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
+    @NotAudited
     @OneToMany(mappedBy = "user")
     List<UserTeam> userTeams = new ArrayList<>();
 
@@ -78,4 +83,9 @@ public class User extends BaseEntity<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "receiver")
     Set<Payment> payments = new HashSet<>();
+
+    public void addPayment(Payment payment){
+        getPayments().add(payment);
+        payment.setReceiver(this);
+    }
 }
