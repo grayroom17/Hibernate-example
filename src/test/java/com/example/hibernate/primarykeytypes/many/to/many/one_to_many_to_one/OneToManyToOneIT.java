@@ -84,12 +84,4 @@ class OneToManyToOneIT extends BaseIT {
         }
     }
 
-    @NotNull
-    private String prepareQuery() {
-        return outContent.toString()
-                .replaceAll("[\\t\\n\\r]+", " ")
-                .replaceAll(" +", " ")
-                .trim();
-    }
-
 }

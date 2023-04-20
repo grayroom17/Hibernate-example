@@ -19,12 +19,11 @@
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.internal.JCacheRegionFactory</property>
 
-        <mapping class="com.example.hibernate.entity.User"/>
-        <mapping class="com.example.hibernate.entity.Company"/>
-        <mapping class="com.example.hibernate.entity.Profile"/>
-        <mapping class="com.example.hibernate.entity.Team"/>
-        <mapping class="com.example.hibernate.entity.UserTeam"/>
-        <mapping class="com.example.hibernate.entity.Payment"/>
+        <mapping class="com.example.hibernate.second_level_cache.User2ndLvlCache"/>
+        <mapping class="com.example.hibernate.second_level_cache.Company2ndLvlCache"/>
+        <mapping class="com.example.hibernate.second_level_cache.Team2ndLvlCache"/>
+        <mapping class="com.example.hibernate.second_level_cache.UserTeam2ndLvlCache"/>
+        <mapping class="com.example.hibernate.second_level_cache.Payment2ndLvlCache"/>
         <mapping class="com.example.hibernate.entity.RevInfo"/>
 
         <!-- DB schema will be updated if needed -->
