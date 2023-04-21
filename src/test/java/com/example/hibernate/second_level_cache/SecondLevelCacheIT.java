@@ -62,6 +62,11 @@ class SecondLevelCacheIT extends BaseIT {
         outContent.reset();
     }
 
+    @AfterEach
+    public void evictCache() {
+        sessionFactory.getCache().evictAllRegions();
+    }
+
     @Test
     void givenEntity_whenUseSecondLvlCache_thenEntityTakenOnlyOnceFromDataBase() {
         @SuppressWarnings("unused")
@@ -99,8 +104,6 @@ class SecondLevelCacheIT extends BaseIT {
 
             session2.getTransaction().commit();
         }
-
-        sessionFactory.getCache().evictAllRegions();
     }
 
     @Test
@@ -147,8 +150,6 @@ class SecondLevelCacheIT extends BaseIT {
 
             session2.getTransaction().commit();
         }
-
-        sessionFactory.getCache().evictAllRegions();
     }
 
     @Test
@@ -195,8 +196,6 @@ class SecondLevelCacheIT extends BaseIT {
 
             session2.getTransaction().commit();
         }
-
-        sessionFactory.getCache().evictAllRegions();
     }
 
     @Test
@@ -213,8 +212,6 @@ class SecondLevelCacheIT extends BaseIT {
         assertNotNull(cacheManager.getCache("Users"));
         assertNotNull(cacheManager.getCache("Companies"));
         assertNull(cacheManager.getCache("NotExistedCache"));
-
-        sessionFactory.getCache().evictAllRegions();
     }
 
     @Test
@@ -248,8 +245,44 @@ class SecondLevelCacheIT extends BaseIT {
 
             session2.getTransaction().commit();
         }
+    }
 
-        sessionFactory.getCache().evictAllRegions();
+    @Test
+    void givenCachedQuery_whenUseSecondLvlCacheAndCacheAnnotationAboveEntityClass_thenThenHibernateDoGetResultOfQueryFromCache() {
+        try (var session1 = sessionFactory.openSession()) {
+            session1.beginTransaction();
+
+            System.setOut(new PrintStream(outContent));
+            session1.createQuery("select u from User2ndLvlCache u where u.id between :start and :end", User2ndLvlCache.class)
+                    .setCacheable(true)
+                    .setParameter("start", 1L)
+                    .setParameter("end", 1000L)
+                    .getResultList();
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users"));
+            outContent.reset();
+            System.setOut(originalOut);
+
+            session1.getTransaction().commit();
+        }
+
+        try (var session2 = sessionFactory.openSession()) {
+            session2.beginTransaction();
+
+            System.setOut(new PrintStream(outContent));
+            session2.createQuery("select u from User2ndLvlCache u where u.id between :start and :end", User2ndLvlCache.class)
+                    .setCacheable(true)
+                    .setParameter("start", 1L)
+                    .setParameter("end", 1000L)
+                    .getResultList();
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertFalse(query.contains("from users"));
+            outContent.reset();
+
+            session2.getTransaction().commit();
+        }
     }
 
 }
