@@ -8,28 +8,40 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
+import org.hibernate.cache.jcache.internal.JCacheRegionFactory;
+import org.hibernate.cache.spi.RegionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
+import javax.cache.CacheManager;
 import java.io.PrintStream;
+import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 class SecondLevelCacheIT extends BaseIT {
+
     private static SessionFactory sessionFactory;
+    private static CacheManager cacheManager;
 
     @BeforeAll
-    static void initSessionFactory() {
+    static void initSessionFactoryAndCacheManager() {
         Configuration configuration = new Configuration();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAttributeConverter(BirthdayConverter.class, true);
         configuration.registerTypeOverride(new JsonBinaryType(), new String[]{JsonBinaryType.INSTANCE.getName()});
         configuration.configure("second_level_cache/hibernate.cfg.xml");
         sessionFactory = configuration.buildSessionFactory();
+
+        RegionFactory regionFactory = ((SessionFactoryImplementor) sessionFactory).getCache().getRegionFactory();
+        JCacheRegionFactory ehcacheRegionFactory = (JCacheRegionFactory) regionFactory;
+        cacheManager = ehcacheRegionFactory.getCacheManager();
     }
 
     @BeforeAll
@@ -44,6 +56,11 @@ class SecondLevelCacheIT extends BaseIT {
         sessionFactory.close();
     }
 
+    @AfterEach
+    public void systemOutToOriginalOut() {
+        System.setOut(originalOut);
+        outContent.reset();
+    }
 
     @Test
     void givenEntity_whenUseSecondLvlCache_thenEntityTakenOnlyOnceFromDataBase() {
@@ -84,7 +101,6 @@ class SecondLevelCacheIT extends BaseIT {
         }
 
         sessionFactory.getCache().evictAllRegions();
-        System.setOut(originalOut);
     }
 
     @Test
@@ -133,7 +149,6 @@ class SecondLevelCacheIT extends BaseIT {
         }
 
         sessionFactory.getCache().evictAllRegions();
-        System.setOut(originalOut);
     }
 
     @Test
@@ -182,6 +197,59 @@ class SecondLevelCacheIT extends BaseIT {
         }
 
         sessionFactory.getCache().evictAllRegions();
-        System.setOut(originalOut);
     }
+
+    @Test
+    void givenEhCacheConfig_whenUseAliasesForRegions_thenThenHibernateUseCustomRegionAliases() {
+        try (var session1 = sessionFactory.openSession()) {
+            session1.beginTransaction();
+
+            session1.find(User2ndLvlCache.class, 10L);
+            session1.find(Company2ndLvlCache.class, 1L);
+
+            session1.getTransaction().commit();
+        }
+
+        assertNotNull(cacheManager.getCache("Users"));
+        assertNotNull(cacheManager.getCache("Companies"));
+        assertNull(cacheManager.getCache("NotExistedCache"));
+
+        sessionFactory.getCache().evictAllRegions();
+    }
+
+    @Test
+    void givenEhCacheConfig_whenUseTtlForRegions_thenThenHibernateUseCustomTtl() {
+        var userId = 10L;
+        try (var session1 = sessionFactory.openSession()) {
+            session1.beginTransaction();
+
+            System.setOut(new PrintStream(outContent));
+            session1.find(User2ndLvlCache.class, userId);
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users"));
+            outContent.reset();
+            System.setOut(originalOut);
+
+            session1.getTransaction().commit();
+        }
+
+        Awaitility.await().pollDelay(1, TimeUnit.SECONDS).until(() -> true);
+
+        try (var session2 = sessionFactory.openSession()) {
+            session2.beginTransaction();
+
+            System.setOut(new PrintStream(outContent));
+            session2.find(User2ndLvlCache.class, userId);
+            log.info(outContent.toString());
+            var query = prepareQuery();
+            assertTrue(query.contains("from users"));
+            outContent.reset();
+
+            session2.getTransaction().commit();
+        }
+
+        sessionFactory.getCache().evictAllRegions();
+    }
+
 }

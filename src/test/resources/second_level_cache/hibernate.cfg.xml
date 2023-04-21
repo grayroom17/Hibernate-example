@@ -18,6 +18,7 @@
         <property name="org.hibernate.envers.default_schema">aud</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.internal.JCacheRegionFactory</property>
+        <property name="hibernate.javax.cache.uri">second_level_cache/ehcache-config.xml</property>
 
         <mapping class="com.example.hibernate.second_level_cache.User2ndLvlCache"/>
         <mapping class="com.example.hibernate.second_level_cache.Company2ndLvlCache"/>

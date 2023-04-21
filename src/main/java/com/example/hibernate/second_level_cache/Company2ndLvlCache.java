@@ -22,7 +22,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "company")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Companies")
 public class Company2ndLvlCache extends BaseEntity<Long> {
 
     @Column(unique = true)

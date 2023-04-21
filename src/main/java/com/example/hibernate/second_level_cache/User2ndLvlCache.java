@@ -21,7 +21,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "users")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Users")
 public class User2ndLvlCache extends BaseEntity<Long> {
 
     @Column(unique = true)
