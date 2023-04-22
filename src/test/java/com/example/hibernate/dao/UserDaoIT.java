@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DaoIT extends BaseIT {
+class UserDaoIT extends BaseIT {
 
-    Dao dao = Dao.getInstance();
+    UserDao userDao = UserDao.getInstance();
 
     @Test
     void whenFindAll_thenReturnAllUsersFromDb() {
         try (var session = sessionFactory.openSession()) {
-            var users = dao.findAll(session);
+            var users = userDao.findAll(session);
             assertEquals(14, users.size());
         }
     }
@@ -23,7 +23,7 @@ class DaoIT extends BaseIT {
     void whenFindAllByFirstName_thenReturnAllUsersWithSpecifiedName() {
         try (var session = sessionFactory.openSession()) {
             var firstName = "Bill";
-            var users = dao.findAllByFirstName(session, firstName);
+            var users = userDao.findAllByFirstName(session, firstName);
             assertEquals(1, users.size());
             assertEquals(firstName, users.stream().findFirst().orElseThrow().getPersonalInfo().getFirstname());
         }
@@ -33,7 +33,7 @@ class DaoIT extends BaseIT {
     void whenFindLimitedUsersOrderedByFirstname_thenReturnFirstLimitedUsersOrderedByFirstname() {
         try (var session = sessionFactory.openSession()) {
             var limit = 5;
-            var users = dao.findLimitedUsersOrderedByFirstname(session, limit);
+            var users = userDao.findLimitedUsersOrderedByFirstname(session, limit);
             assertEquals(limit, users.size());
         }
     }
@@ -42,7 +42,7 @@ class DaoIT extends BaseIT {
     void whenFindAllByCompanyName_thenReturnUsersFromSpecifiedCompany() {
         try (var session = sessionFactory.openSession()) {
             var companyName = "Google";
-            var users = dao.findAllByCompanyName(session, companyName);
+            var users = userDao.findAllByCompanyName(session, companyName);
             assertEquals(2, users.size());
             assertTrue(users.stream().allMatch(user -> user.getCompany().getName().equals(companyName)));
         }
@@ -52,7 +52,7 @@ class DaoIT extends BaseIT {
     void whenFindAllPaymentsByCompanyName_thenReturnOrderedPaymentsOfUsersFromSpecifiedCompany() {
         try (var session = sessionFactory.openSession()) {
             var companyName = "Apple";
-            var payments = dao.findAllPaymentsByCompanyName(session, companyName);
+            var payments = userDao.findAllPaymentsByCompanyName(session, companyName);
             assertEquals(5, payments.size());
             assertTrue(payments.stream().allMatch(payment -> payment.getReceiver().getCompany().getName().equals(companyName)));
         }
@@ -63,7 +63,7 @@ class DaoIT extends BaseIT {
         try (var session = sessionFactory.openSession()) {
             var firstName = "Steve";
             var lastName = "Jobs";
-            var payments = dao.findAveragePaymentAmountByFirstAndLastNames(session, firstName, lastName);
+            var payments = userDao.findAveragePaymentAmountByFirstAndLastNames(session, firstName, lastName);
             assertEquals(450d, payments);
         }
     }
@@ -71,7 +71,7 @@ class DaoIT extends BaseIT {
     @Test
     void whenFindCompanyNamesWithAvgUserPaymentsOrderedByCompanyName_thenReturnAverageAmountOfPaymentsForAllUsersOfSpecifiedCompany() {
         try (var session = sessionFactory.openSession()) {
-            var entities = dao.findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName(session);
+            var entities = userDao.findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName(session);
 
             assertEquals(3, entities.size());
 
@@ -92,7 +92,7 @@ class DaoIT extends BaseIT {
     @Test
     void whenIsItPossible_thenYesItIsPossible() {
         try (var session = sessionFactory.openSession()) {
-            var entities = dao.isItPossible(session);
+            var entities = userDao.isItPossible(session);
 
             assertEquals(2, entities.size());
 
