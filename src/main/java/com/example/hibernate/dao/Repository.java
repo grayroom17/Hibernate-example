@@ -16,5 +16,5 @@ public interface Repository<K extends Serializable, E extends BaseEntity<K>> {
 
     void update(E entity);
 
-    void deleteById(K id);
+    void delete(E entity);
 }

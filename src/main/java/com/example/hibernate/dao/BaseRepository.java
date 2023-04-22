@@ -38,7 +38,7 @@ public abstract class BaseRepository<K extends Serializable, E extends BaseEntit
     }
 
     @Override
-    public void deleteById(K id) {
-        entityManager.remove(id);
+    public void delete(E entity) {
+        entityManager.remove(entity);
     }
 }
