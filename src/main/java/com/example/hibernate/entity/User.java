@@ -29,6 +29,12 @@ import java.util.Set;
                                 @NamedAttributeNode(value = "team")
                         })
         })
+
+@NamedEntityGraph(name = "graphWithCompanyAndProfile",
+        attributeNodes = {
+                @NamedAttributeNode(value = "company"),
+                @NamedAttributeNode(value = "profile")
+        })
 @FetchProfile(name = "withCompanyAndPayments",
         fetchOverrides = {
                 @FetchProfile.FetchOverride(entity = User.class,
@@ -84,7 +90,7 @@ public class User extends BaseEntity<Long> {
     @OneToMany(mappedBy = "receiver")
     Set<Payment> payments = new HashSet<>();
 
-    public void addPayment(Payment payment){
+    public void addPayment(Payment payment) {
         getPayments().add(payment);
         payment.setReceiver(this);
     }
