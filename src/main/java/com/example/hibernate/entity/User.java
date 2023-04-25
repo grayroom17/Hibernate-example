@@ -1,7 +1,9 @@
 package com.example.hibernate.entity;
 
+import com.example.hibernate.validation.ForGroupValidationTest;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -29,6 +31,12 @@ import java.util.Set;
                                 @NamedAttributeNode(value = "team")
                         })
         })
+
+@NamedEntityGraph(name = "graphWithCompanyAndProfile",
+        attributeNodes = {
+                @NamedAttributeNode(value = "company"),
+                @NamedAttributeNode(value = "profile")
+        })
 @FetchProfile(name = "withCompanyAndPayments",
         fetchOverrides = {
                 @FetchProfile.FetchOverride(entity = User.class,
@@ -50,12 +58,14 @@ import java.util.Set;
 public class User extends BaseEntity<Long> {
 
     @Column(unique = true)
+    @NotNull
     String username;
 
     @Embedded
     PersonalInfo personalInfo;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     Role role;
 
     @NotAudited
@@ -84,7 +94,7 @@ public class User extends BaseEntity<Long> {
     @OneToMany(mappedBy = "receiver")
     Set<Payment> payments = new HashSet<>();
 
-    public void addPayment(Payment payment){
+    public void addPayment(Payment payment) {
         getPayments().add(payment);
         payment.setReceiver(this);
     }

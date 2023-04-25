@@ -5,6 +5,7 @@ import com.example.hibernate.acid.optimistic.lock_type.all.PaymentOptimisticLock
 import com.example.hibernate.acid.optimistic.lock_type.dirty.PaymentOptimisticLockTypeDirty;
 import com.example.hibernate.acid.pessimistic.PaymentPessimisticLock;
 import com.example.hibernate.entity.Payment;
+import com.example.hibernate.entity.Role;
 import com.example.hibernate.entity.User;
 import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;
@@ -260,6 +261,7 @@ class AcidIT extends BaseIT {
             var userId = 10L;
             var user = session.find(User.class, userId);
             user.setUsername("newUserName");
+            user.setRole(Role.USER);
 
             var transaction = session.getTransaction();
             var exception = assertThrows(PersistenceException.class, transaction::commit);
