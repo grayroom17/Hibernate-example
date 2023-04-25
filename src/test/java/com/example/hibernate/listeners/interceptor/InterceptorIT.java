@@ -1,6 +1,7 @@
 package com.example.hibernate.listeners.interceptor;
 
 import com.example.hibernate.BaseIT;
+import com.example.hibernate.entity.Role;
 import com.example.hibernate.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class InterceptorIT extends BaseIT {
             var user = session.find(User.class, 10L);
 
             user.setUsername("new Name");
+            user.setRole(Role.USER);
 
             System.setOut(new PrintStream(outContent));
             session.getTransaction().commit();

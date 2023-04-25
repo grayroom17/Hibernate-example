@@ -3,6 +3,8 @@ package com.example.hibernate.dto;
 import com.example.hibernate.entity.PersonalInfo;
 import com.example.hibernate.entity.Profile;
 import com.example.hibernate.entity.Role;
+import com.example.hibernate.validation.ForGroupValidationTest;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,16 +22,14 @@ public class UserWebDto {
 
     PersonalInfo personalInfo;
 
+    @NotNull
     Role role;
 
+    @NotNull(groups = ForGroupValidationTest.class)
     String info;
 
     CompanyWebDto company;
 
     Profile profile;
-
-//    List<UserTeam> userTeams = new ArrayList<>();
-
-//    Set<Payment> payments = new HashSet<>();
 
 }

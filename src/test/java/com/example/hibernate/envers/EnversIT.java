@@ -24,6 +24,7 @@ class EnversIT extends BaseIT {
 
             User user = User.builder()
                     .username("new user 1")
+                    .role(Role.USER)
                     .build();
 
             session.persist(user);
@@ -54,6 +55,7 @@ class EnversIT extends BaseIT {
             session.beginTransaction();
             User user = User.builder()
                     .username("new user 2")
+                    .role(Role.USER)
                     .build();
             session.persist(user);
             session.getTransaction().commit();
@@ -98,6 +100,7 @@ class EnversIT extends BaseIT {
             session.beginTransaction();
             User user = User.builder()
                     .username("new user 2")
+                    .role(Role.USER)
                     .build();
             session.persist(user);
             session.getTransaction().commit();

@@ -37,6 +37,10 @@ dependencies {
 
     implementation 'net.bytebuddy:byte-buddy:1.14.4'
 
+    implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
+    implementation 'jakarta.el:jakarta.el-api:5.0.1'
+    implementation 'org.glassfish:jakarta.el:5.0.0-M1'
+
     runtimeOnly 'org.postgresql:postgresql:42.5.4'
 
     compileOnly 'org.projectlombok:lombok:1.18.26'

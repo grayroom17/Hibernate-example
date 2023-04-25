@@ -1,7 +1,9 @@
 package com.example.hibernate.entity;
 
+import com.example.hibernate.validation.ForGroupValidationTest;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -56,12 +58,14 @@ import java.util.Set;
 public class User extends BaseEntity<Long> {
 
     @Column(unique = true)
+    @NotNull
     String username;
 
     @Embedded
     PersonalInfo personalInfo;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     Role role;
 
     @NotAudited
